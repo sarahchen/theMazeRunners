@@ -16,7 +16,7 @@ Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int cX, int cY)
 	setNodes(centerX, centerY); // init all nodes
 }
 
-void Cell::setNodes(int centerX, int centerY)
+void Cell::setNodes(double centerX, double centerY)
 {
 	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
 	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
@@ -130,7 +130,7 @@ std::vector<int> Cell::getAvailableNeighbors()
 	return availableNeighbors;
 }
 
-void Cell::drawCell(int centerX, int centerY)
+void Cell::drawCell(double centerX, double centerY)
 {
 	// set up local coordinate system
 	glLoadIdentity();

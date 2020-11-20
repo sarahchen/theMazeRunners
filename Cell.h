@@ -10,12 +10,12 @@ class Cell {
 	// do we need "nodes" for each cell to draw it? 
 private:
 	struct node {
-		int x;
-		int y;
+		double x;
+		double y;
 	};
 	int rowSize, colSize;
-	int radius;
-	int centerX, centerY; // we might be able to get these from the nodes label and maze dimensions
+	double radius;
+	double centerX, centerY; // we might be able to get these from the nodes label and maze dimensions
 	bool seen;		// visited if true;	
 	int label;									
 	int neighbors[6];// array of neighbor labels --> index 0 is above neighbor and go around to the right
@@ -24,6 +24,7 @@ private:
 	std::vector<node> cellNodes;
 
 public:
+	Cell() {};
 	// initialize cell --> as full walls?
 	Cell(int alabel, int mazeRowSize, int mazeColSize, int cX, int cY);
 
@@ -40,7 +41,7 @@ public:
 	int getCenterX() { return centerX; }
 	int getCenterY() { return centerY; }
 
-	void setNodes(int centerX, int centerY);
+	void setNodes(double centerX, double centerY);
 	// return desired node's x and y coordinates
 	int getNodeX(int nodeIdx) { return cellNodes[nodeIdx].x; } 
 	int getNodeY(int nodeIdx) { return cellNodes[nodeIdx].y; }
@@ -67,5 +68,5 @@ public:
 	void setWall(int index, bool set) { walls[index] = set; }
 
 	// draws the cell with corresponding walls --> local coordinates
-	void drawCell(int centerX, int centerY);
+	void drawCell(double centerX, double centerY);
 };

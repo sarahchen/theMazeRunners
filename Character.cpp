@@ -17,7 +17,7 @@ class for creating a character object in the game
 #include <algorithm>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
-#include "ViewManager.h"
+#include "ViewManager2.h"
 #include "DrawingUtilNG.h"
 //#include "StringPlus.h"
 #include "GraphicFont.h"
