@@ -35,6 +35,11 @@ public:
    4  3
 	*/
 
+	bool isSeen() { return seen; }
+	void setSeen() { seen = true; }
+	int getCenterX() { return centerX; }
+	int getCenterY() { return centerY; }
+
 	void setNodes(int centerX, int centerY);
 	// return desired node's x and y coordinates
 	int getNodeX(int nodeIdx) { return cellNodes[nodeIdx].x; } 
@@ -47,6 +52,10 @@ public:
 	// check if cell has any unseen neighbors  --> I think we have to do this in the maze class
 	bool hasUnseenNeighbors();
 	*/
+
+	// sets list to the list of all neighbor indices
+	void getAllNeighbors(int list[6]) { list = neighbors; }
+
 	// returns the label of the neighbor at the desired index
 	int getNeighbor(int idx);
 	// returns a vector of labels of available cells to move to
@@ -54,6 +63,8 @@ public:
 
 	// returns the array of walls
 	bool getWalls() { return walls; }
+	// sets wall at location index
+	void setWall(int index, bool set) { walls[index] = set; }
 
 	// draws the cell with corresponding walls --> local coordinates
 	void drawCell(int centerX, int centerY);
