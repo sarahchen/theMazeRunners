@@ -111,3 +111,18 @@ void Maze::drawMaze(ViewManager& theManager)
         }
     }
 }
+
+//placeholder for now, needs to have access to player position, somehow
+//returns euclidean distance from desired point to the player position
+double Maze::calcHeuristic(double posX, double posY) {
+    
+    double playerPosX = 10; //obviously needs to be changed
+    double playerPosY = 10; //obviously needs to be changed
+    
+    double dX = posX - playerPosX; //sign doesn't matter because it will be squared later
+    double dY = posY - playerPosY; //sign doesn't matter because it will be squared later
+
+    double dist = sqrt(dX * dX + dY * dY);
+    
+    return dist;
+}

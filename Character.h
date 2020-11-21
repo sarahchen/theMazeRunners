@@ -24,7 +24,7 @@ struct characterFeatures {
 };
 
 class Character {
-private:
+protected:
 	//window width and height
 	int width, height;
 
@@ -32,6 +32,9 @@ private:
 	vertex initPos, posCenter;
 	double velocity;
 
+	GLuint textID;
+
+private:
 	double headingAngle;
 	bool gameOver;
 	int livesRemaining, score;
@@ -41,10 +44,9 @@ private:
 	double accel, mu;
 	double ax, ay, bx, by, cx, cy, dx, dy;  //car edges
 
-	GLuint textID;
-
 public:
 	//class constructor
+	Character() {};
 	Character(int xpos, int ypos, GLuint Id);
 
 	// get and set for all member variables
