@@ -1,29 +1,38 @@
+/*
+This class is resposible for creating the
+cell object and the assiciated variables
+and functionalities. It isn't fully fleshed out
+yet and the row column scheme isn't fully
+finalized so there are some sketches
+commented in to show what I was going for.
+*/
+
 #include "Cell.h"
 
 using namespace std;
 
-Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int cX, int cY)
+Cell::Cell(int alabel, int mazeRowSize, int mazeColSize)
 {
 	radius = 10;
 	rowSize = mazeRowSize; colSize = mazeColSize;
-	centerX = cX; centerY = cY;
+	// grix X and grid Y get set somehow
 	seen = false;
 	label = alabel;
 	for (int i = 0; i < 6; i++) // init all walls as true
 		walls[i] = true;
 	for (int i = 0; i < 6; i++)
 		neighbors[i] = getNeighbor(i); // finds each neighbor
-	setNodes(centerX, centerY); // init all nodes
+	setNodes(); // init all nodes
 }
 
-void Cell::setNodes(double centerX, double centerY)
+void Cell::setNodes()
 {
-	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
-	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
-	cellNodes.push_back({ centerX + radius, centerY });
-	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY + radius * sin(PI / 6) });
-	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY + radius * sin(PI / 6) });
-	cellNodes.push_back({ centerX - radius, centerY });
+	cellNodes.push_back({ -radius * cos(PI / 6), -radius * sin(PI / 6) });
+	cellNodes.push_back({ radius * cos(PI / 6), -radius * sin(PI / 6) });
+	cellNodes.push_back({ radius, 0 });
+	cellNodes.push_back({ radius * cos(PI / 6), radius * sin(PI / 6) });
+	cellNodes.push_back({ -radius * cos(PI / 6), radius * sin(PI / 6) });
+	cellNodes.push_back({ -radius, 0 });
 }
 
 int Cell::getNeighbor(int label)
@@ -35,7 +44,7 @@ col 1
  | col 2
  |   | col 3
  |   |  |
- __  | __    __    __    __   
+ __  | __    __    __    __
 /01\__/03\__/05\__/07\__/09\__
 \__/02\__/04\__/06\__/08\__/10\--- row 1
 /11\__/13\__/15\__/17\__/19\__/
@@ -45,7 +54,6 @@ col 1
 /31\__/33\__/35\__/37\__/39\__/
 \__/32\__/34\__/36\__/38\__/40\--- row 4
 /  \__/  \__/  \__/  \__/  \__/
-
 alternative row and col convention --> doesnt effect drawing but will effect determining neighbors
 col 1
  | col 2
@@ -57,16 +65,13 @@ col 1
 /11\__/12\__/13\__/14\__/15\__/ --- row 3
 \__/16\__/17\__/18\__/19\__/20\ --- row 4
 /  \__/  \__/  \__/  \__/  \__/
-
-
 // neighbor index cases --> same convention for walls
  __/00\__
 /05\__/01\
 \__/cu\__/
 /04\rr/02\
 \__/03\__/
-   \__/  
-
+   \__/
 	*/
 	// math to figure out neighbors
 	switch (label) {
@@ -130,13 +135,11 @@ std::vector<int> Cell::getAvailableNeighbors()
 	return availableNeighbors;
 }
 
-void Cell::drawCell(double centerX, double centerY)
+void Cell::drawCell()
 {
-	// set up local coordinate system
-	glLoadIdentity();
-	glTranslatef(centerX, centerY, 0);
+	// set up local coordinate system in the Maze class when drawing each node
 	// set wall color
-	glColor3ub(0, 0, 0);
+	glColor3ub(255,0,0);
 	// draw the walls in 
 	glBegin(GL_LINE_STRIP);
 	if (walls[0]) {
@@ -164,6 +167,4 @@ void Cell::drawCell(double centerX, double centerY)
 		glVertex2d(cellNodes[0].x, cellNodes[0].y);
 	}
 	glEnd();
-
 }
-
