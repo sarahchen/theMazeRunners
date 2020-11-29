@@ -13,11 +13,11 @@ commented in to show what I was going for.
 
 using namespace std;
 
-Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int x, int y)
+Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int cx, int cy)
 {
-	radius = 10;
+	radius = 10; // distance from center to a corner node -- this can be changed to whatever is appropriate
 	rowSize = mazeRowSize; colSize = mazeColSize;
-	gridX = x; gridY = y;
+	centerX = cx; centerY = cy;
 	seen = false;
 	label = alabel;
 	for (int i = 0; i < 6; i++) // init all walls as true
@@ -29,12 +29,12 @@ Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int x, int y)
 
 void Cell::setNodes()
 {
-	cellNodes.push_back({ -radius * cos(PI / 6), -radius * sin(PI / 6) });
-	cellNodes.push_back({ radius * cos(PI / 6), -radius * sin(PI / 6) });
-	cellNodes.push_back({ radius, 0 });
-	cellNodes.push_back({ radius * cos(PI / 6), radius * sin(PI / 6) });
-	cellNodes.push_back({ -radius * cos(PI / 6), radius * sin(PI / 6) });
-	cellNodes.push_back({ -radius, 0 });
+	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
+	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
+	cellNodes.push_back({ centerX + radius, centerY });
+	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY + radius * sin(PI / 6) });
+	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY + radius * sin(PI / 6) });
+	cellNodes.push_back({ centerX - radius, centerY });
 }
 
 int Cell::getNeighbor(int label)
@@ -51,7 +51,7 @@ col 1
 \__/02\__/04\__/06\__/08\__/10\--- row 1
 /11\__/13\__/15\__/17\__/19\__/
 \__/12\__/16\__/16\__/18\__/20\--- row 2
-/21\__/23\__/25\__/27\__/29\__/
+/21\__/23\__/25\__/27\__/29\__/				<---- This is the model the current getNeighbor is based on
 \__/22\__/24\__/26\__/28\__/30\--- row 3
 /31\__/33\__/35\__/37\__/39\__/
 \__/32\__/34\__/36\__/38\__/40\--- row 4
@@ -126,7 +126,7 @@ col 1
 	}
 	return 0;
 }
-
+// This could be simpler and not reset everytime probably
 std::vector<int> Cell::getAvailableNeighbors()
 {
 	availableNeighbors.clear();
@@ -143,6 +143,8 @@ void Cell::drawCell()
 	// set wall color
 	glColor3ub(255,0,0);
 	// draw the walls in 
+	glLoadIdentity();
+	glTranslatef(centerX, centerY, 0);
 	glBegin(GL_LINE_STRIP);
 	if (walls[0]) {
 		glVertex2d(cellNodes[0].x, cellNodes[0].y);
@@ -169,4 +171,5 @@ void Cell::drawCell()
 		glVertex2d(cellNodes[0].x, cellNodes[0].y);
 	}
 	glEnd();
+	glLoadIdentity();
 }
