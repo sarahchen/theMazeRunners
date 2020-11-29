@@ -1,4 +1,6 @@
 /*
+Nate Winneg -- Project Component Code
+
 This class is resposible for creating the
 cell object and the assiciated variables
 and functionalities. It isn't fully fleshed out
@@ -11,11 +13,11 @@ commented in to show what I was going for.
 
 using namespace std;
 
-Cell::Cell(int alabel, int mazeRowSize, int mazeColSize)
+Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int x, int y)
 {
 	radius = 10;
 	rowSize = mazeRowSize; colSize = mazeColSize;
-	// grix X and grid Y get set somehow
+	gridX = x; gridY = y;
 	seen = false;
 	label = alabel;
 	for (int i = 0; i < 6; i++) // init all walls as true
