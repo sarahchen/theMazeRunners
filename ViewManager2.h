@@ -1,10 +1,10 @@
 /*
-DEMO
-ViewManager.h
-Created by Ryder Babik
-11/1/20
+Maze Mania
+ViewManager2.cpp
+Created by Nate Winneg, Ryder Babik
+11/19/20
 Engineering Computation 24780-B
-header file for the view manager class
+Header file that orchestrates the model and view
 */
 
 #pragma once
@@ -18,31 +18,118 @@ header file for the view manager class
 #include "yssimplesound.h"
 #include "GraphicFont.h"
 #include "Character.h"
+#include "Model.h"
+
+//enum carType { lambo, F1, truck, regCar };
 
 class ViewManager {
 
 private:
 	//window width and height
 	int width, height;
-	bool isPlaying = false;
-	bool exitDesired = false;
+	bool isPlaying = false;		//user is playing game
+	bool exitDesired = false;		//user has clicked on the exit button
 
 	////model object
-	//Model theModel;
+	Model theModel;
+	
+	carType selectedCar;		//enum for the type of car user chose
+	bool lamboselected;			//booleans to know if car was the selected one
+	bool F1selected;
+	bool truckSelected;
+	bool carSelected;
+
+	bool newVehicleChosen;		//bool to register event of switching selected car
+	int selectionIndex;			//"index" or car number of car selected
+
+	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 
 	//graphics to be displayed
 	vector<GLuint> textIds;
-	YsRawPngDecoder carPic;
+	YsRawPngDecoder carPic, F1Pic, truckPic, basicCarPic;
+	YsRawPngDecoder keyboardPic;
+	double transpR, transpG, transpB;
 
 	////texts to be used for strings
 	ImpactFont impact; 
 	OldEnglishFont oldEnglish;
+	GaramondFont garamond;
+	ComicSansFont comicSans;
 	//ComicSansFont comicSans;
 	//GaramondFont garamond;
 
 	////sounds to be played
 	//YsSoundPlayer soundPlayer;
 	//YsSoundPlayer::SoundData EyeTiger, Sword, Splat, Round1, Round2, FinalRound, EvilLaugh, scream, celebration, error;
+
+
+public:
+	//class constructor
+	ViewManager();
+
+	//basically runs the entire program
+	void manage();
+
+	//pass it the decoder name, the png file name, and whether you want to add it to the text id vector for the fruits or robot
+	void createTextId(YsRawPngDecoder& png, const char* fileName, vector<GLuint>& textIds);
+
+	//gets all the text IDs ready to then be called as a parameter in the createTextId function
+	void prepareTheTextIds();
+
+	////load the leaderboard
+	//void load();
+
+	////display the loaded  leaderboard data
+	//void drawLeaders();
+
+	////save the leaderboard
+	//void save();
+
+	//// Driver function to sort the vector elements 
+	//// by second element of pairs 
+	//bool sortbysec(const pair<int, int>& a,
+	//	const pair<int, int>& b);
+
+	//void readFile(std::ifstream& inFile);
+	//// reads the given file for accesing saved leaderboard
+
+	//void writeFile(std::ofstream& outFile);
+	//// loop through the leaders vector and writes to output file
+
+	//get methods so that each class can be in charge of assigning its own text ID to graphics
+	GLuint getCarID() { return textIds[0]; }
+
+	// displays the start screen
+		// locX and locY are mouse locations and lb is the left button part of mouse event
+	void startScreen(int locX, int locY, int lb);
+
+	// displays the screen during gameplay
+		// pass it the same variables as startScreen for the exit button
+	void playScreen(int locX, int locY, int lb);
+
+	//draws the static elements that are present in both start and play screens (such as game title)
+	void drawStaticElements();
+
+	//draws the four cars to choose from
+	void drawCars(int locX, int locY, int lb);
+
+	//draws a blinking outline around the car name being hovered over
+	void drawHoverOutline(int leftX, int topY, int rightX, int bottomY);
+
+	//when a new car is selected, first clear previous selection
+	void clearCarSelection();
+
+	//draws new car selection
+	void drawSelection(int leftX, int rightX, int topY, int bottomY);
+
+	//outlines color section button
+	void drawColorSelect(int locX, int locY, int lb);
+
+	//adjusts the transparency of the selected car
+	void setTransparency(int locX, int locY, int lb);
+	//void setCarSelection(bool &selection, bool *selectionOptions);
+	//void drawHoverOutline(int leftX, int topY, int rightX, int bottomY);
+};
 
 
 public:
