@@ -26,7 +26,7 @@ private:
 	};
 	int rowSize, colSize;
 	double radius;
-	int gridX, gridY;
+	int centerX, centerY;
 	bool seen;		// visited if true;	
 	int label;
 	int neighbors[6];// array of neighbor labels --> index 0 is above neighbor and go around to the right
@@ -37,7 +37,7 @@ private:
 public:
 	Cell() {};
 	// initialize cell --> as full walls?
-	Cell(int alabel, int mazeRowSize, int mazeColSize, int x, int y);
+	Cell(int alabel, int mazeRowSize, int mazeColSize, int cx, int cy);
 
 	/*
 	* corresponding node location to vector index values;
@@ -54,6 +54,9 @@ public:
 	// return desired node's x and y coordinates
 	int getNodeX(int nodeIdx) { return cellNodes[nodeIdx].x; }
 	int getNodeY(int nodeIdx) { return cellNodes[nodeIdx].y; }
+	// return centerX and centerY of the cell
+	int getCenterX() { return centerX; }
+	int getCenterY() { return centerY; }
 
 	/*
 	// choose an unseen neighbor and remove the wall between them -- return label of neighbor
