@@ -1,4 +1,6 @@
 /*
+Nate Winneg - Project Component Code
+
 This class is resposible for creating the
 cell object and the assiciated variables
 and functionalities. It isn't fully fleshed out
@@ -35,7 +37,7 @@ private:
 public:
 	Cell() {};
 	// initialize cell --> as full walls?
-	Cell(int alabel, int mazeRowSize, int mazeColSize);
+	Cell(int alabel, int mazeRowSize, int mazeColSize, int x, int y);
 
 	/*
 	* corresponding node location to vector index values;
