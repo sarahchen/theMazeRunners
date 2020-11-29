@@ -23,6 +23,7 @@ Model::Model()
 {
 	//window size and simulation time
 	FsGetWindowSize(width, height);
+	theMaze.generateMaze();
 }
 
 void Model::load()
@@ -91,8 +92,9 @@ void Model::update(ViewManager& theManager)
 	// if (theMaze.validCharMove(bx,by,cx,cy)) {willHitObstacleback = false;}
 	// else { willHitObstacleBack = true; }
 
-	theCharacter.updateKinematics(.1);
-	theCharacter.draw(theManager);
+	// theCharacter.updateKinematics(.1);
+	// theCharacter.draw(theManager);
+	theMaze.drawMaze(theManager);
 }
 
 void Model::save()

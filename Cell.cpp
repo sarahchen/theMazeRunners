@@ -13,9 +13,9 @@ commented in to show what I was going for.
 
 using namespace std;
 
-Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int cx, int cy)
+Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, double cx, double cy)
 {
-	radius = 10; // distance from center to a corner node -- this can be changed to whatever is appropriate
+	radius = CELL_RADIUS; // distance from center to a corner node -- this can be changed to whatever is appropriate
 	rowSize = mazeRowSize; colSize = mazeColSize;
 	centerX = cx; centerY = cy;
 	seen = false;
@@ -29,11 +29,11 @@ Cell::Cell(int alabel, int mazeRowSize, int mazeColSize, int cx, int cy)
 
 void Cell::setNodes()
 {
-	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
-	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY - radius * sin(PI / 6) });
+	cellNodes.push_back({ centerX - radius * sin(PI / 6), centerY - radius * cos(PI / 6) });
+	cellNodes.push_back({ centerX + radius * sin(PI / 6), centerY - radius * cos(PI / 6) });
 	cellNodes.push_back({ centerX + radius, centerY });
-	cellNodes.push_back({ centerX + radius * cos(PI / 6), centerY + radius * sin(PI / 6) });
-	cellNodes.push_back({ centerX - radius * cos(PI / 6), centerY + radius * sin(PI / 6) });
+	cellNodes.push_back({ centerX + radius * sin(PI / 6), centerY + radius * cos(PI / 6) });
+	cellNodes.push_back({ centerX - radius * sin(PI / 6), centerY + radius * cos(PI / 6) });
 	cellNodes.push_back({ centerX - radius, centerY });
 }
 
@@ -143,30 +143,31 @@ void Cell::drawCell()
 	// set wall color
 	glColor3ub(255,0,0);
 	// draw the walls in 
-	glLoadIdentity();
-	glTranslatef(centerX, centerY, 0);
+	//glLoadIdentity();
+	//glTranslatef(centerX, centerY, 0);
+
 	glBegin(GL_LINE_STRIP);
 	if (walls[0]) {
 		glVertex2d(cellNodes[0].x, cellNodes[0].y);
 		glVertex2d(cellNodes[1].x, cellNodes[1].y);
 	}
-	else if (walls[1]) {
+	if (walls[1]) {
 		glVertex2d(cellNodes[1].x, cellNodes[1].y);
 		glVertex2d(cellNodes[2].x, cellNodes[2].y);
 	}
-	else if (walls[2]) {
+	if (walls[2]) {
 		glVertex2d(cellNodes[2].x, cellNodes[2].y);
 		glVertex2d(cellNodes[3].x, cellNodes[3].y);
 	}
-	else if (walls[3]) {
+	if (walls[3]) {
 		glVertex2d(cellNodes[3].x, cellNodes[3].y);
 		glVertex2d(cellNodes[4].x, cellNodes[4].y);
 	}
-	else if (walls[4]) {
+	if (walls[4]) {
 		glVertex2d(cellNodes[4].x, cellNodes[4].y);
 		glVertex2d(cellNodes[5].x, cellNodes[5].y);
 	}
-	else if (walls[5]) {
+	if (walls[5]) {
 		glVertex2d(cellNodes[5].x, cellNodes[5].y);
 		glVertex2d(cellNodes[0].x, cellNodes[0].y);
 	}

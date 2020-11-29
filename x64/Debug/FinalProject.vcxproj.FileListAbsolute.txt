@@ -1,2 +1,4 @@
 C:\Users\Anton\source\repos\sarahchen\theMazeRunners\x64\Debug\FinalProject.exe
 C:\Users\Anton\source\repos\sarahchen\theMazeRunners\x64\Debug\FinalProject.pdb
+C:\Users\sarah\Documents\Academics\F20-S21\EngComp\theMazeRunners\x64\Debug\FinalProject.exe
+C:\Users\sarah\Documents\Academics\F20-S21\EngComp\theMazeRunners\x64\Debug\FinalProject.pdb

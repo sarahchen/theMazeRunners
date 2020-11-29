@@ -3,19 +3,35 @@
 // initialize Grid for the maze
 Maze::Maze() 
 {
-    // For now 10x10 hexagonal Grid
-    // 6 10x10 Grids make up 1 cube
-    // Every 100 Cells make up 1 Grid
-    // 600 Cells total
+    // for now, 10x10 Grid of Hexagons
     
     rowSize = 10;
-    colSize = 10;
+    colSize = 16;
+    
+    int gridX, gridY;
+    double centerX, centerY;
 
-    for(int i = 1; i < 600; i++) {
-        Cell tmp(i, rowSize, colSize, i*rowSize+10, i*colSize+10);
+    for(int i = 1; i < GRID_SIZE + 1; i++) {
+
+        // Determine centerX and centerY for current Cell
+        // Using Convention 1 from Cell.cpp
+
+        gridX = i % colSize;
+        gridY = (i / colSize) + 1;
+        if (gridX == 0) { 
+            gridX = colSize;
+            gridY = gridY - 1;
+        }
+        
+        centerX = 150. + CELL_RADIUS + (CELL_RADIUS + CELL_RADIUS*sin(PI / 6))*(gridX-1.);
+        centerY = 125. + ((CELL_RADIUS/2)*sqrt(3)) + ((CELL_RADIUS / 2) * sqrt(3)) * (gridX % 2)
+            + (CELL_RADIUS*sqrt(3))*(gridY-1.);
+
+        Cell tmp(i, rowSize, colSize, centerX, centerY);
         Grid[i] = tmp;
     }
 }
+
 bool Maze::searchNext(int currCell, int& nextCell)
 {
     Cell* current = &Grid[currCell];
@@ -31,8 +47,8 @@ bool Maze::searchNext(int currCell, int& nextCell)
         nextCell = unseenNeighbors[rand() % unseenNeighbors.size()];
 
         // Set Wall in that direction to false
-        int* idx = std::find(allNeighbors, allNeighbors+sizeof(allNeighbors), nextCell);
-        if (idx != allNeighbors + sizeof(allNeighbors))
+        int* idx = std::find(std::begin(allNeighbors), std::end(allNeighbors), nextCell);
+        if (idx != std::end(allNeighbors))
         {
             current->setWall(*idx, false);
         }
@@ -102,14 +118,14 @@ void Maze::drawMaze(ViewManager& theManager)
     // for each side of the cube, just draw that side?
     // side goes from 1-6
     
-    for (int side = 1; side < 7; side++) {
+    // for (int side = 1; side < 7; side++) {
+        int side = 1;
         int cellIdx = 0;
-        for (int i = 1; i < 100; i++) {
+        for (int i = 1; i < GRID_SIZE+1; i++) {
             cellIdx = i * side;
-            Grid[cellIdx].drawCell(Grid[cellIdx].getCenterX(),
-                Grid[cellIdx].getCenterY());
+            Grid[cellIdx].drawCell();
         }
-    }
+    // }
 }
 
 //placeholder for now, needs to have access to player position, somehow

@@ -5,6 +5,8 @@
 #include <stack>
 #include "Cell.h"
 
+#define GRID_SIZE 160
+
 class Cell;
 class ViewManager;
 

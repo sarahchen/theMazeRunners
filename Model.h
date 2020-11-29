@@ -18,6 +18,7 @@ Header file that creates the model
 #include "yssimplesound.h"
 #include "GraphicFont.h"
 #include "Character.h"
+#include "Maze.h"
 
 class Model {
 
@@ -27,6 +28,7 @@ private:
 	ComicSansFont comicSans;
 
 	Character theCharacter;
+	Maze theMaze;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 
