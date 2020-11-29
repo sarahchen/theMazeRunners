@@ -1,3 +1,12 @@
+/*
+This class is resposible for creating the
+cell object and the assiciated variables
+and functionalities. It isn't fully fleshed out
+yet and the row column scheme isn't fully
+finalized so there are some sketches 
+commented in to show what I was going for.
+*/
+
 #pragma once
 #include <vector>
 #include <iostream>
@@ -15,9 +24,9 @@ private:
 	};
 	int rowSize, colSize;
 	double radius;
-	double centerX, centerY; // we might be able to get these from the nodes label and maze dimensions
+	int gridX, gridY;
 	bool seen;		// visited if true;	
-	int label;									
+	int label;
 	int neighbors[6];// array of neighbor labels --> index 0 is above neighbor and go around to the right
 	bool walls[6];	// if true, there is a wall
 	std::vector<int> availableNeighbors; // individual cells don't have access to other cells states only their labels...?
@@ -26,7 +35,7 @@ private:
 public:
 	Cell() {};
 	// initialize cell --> as full walls?
-	Cell(int alabel, int mazeRowSize, int mazeColSize, int cX, int cY);
+	Cell(int alabel, int mazeRowSize, int mazeColSize);
 
 	/*
 	* corresponding node location to vector index values;
@@ -38,18 +47,15 @@ public:
 
 	bool isSeen() { return seen; }
 	void setSeen() { seen = true; }
-	int getCenterX() { return centerX; }
-	int getCenterY() { return centerY; }
 
-	void setNodes(double centerX, double centerY);
+	void setNodes();
 	// return desired node's x and y coordinates
-	int getNodeX(int nodeIdx) { return cellNodes[nodeIdx].x; } 
+	int getNodeX(int nodeIdx) { return cellNodes[nodeIdx].x; }
 	int getNodeY(int nodeIdx) { return cellNodes[nodeIdx].y; }
 
 	/*
 	// choose an unseen neighbor and remove the wall between them -- return label of neighbor
 	int searchNext();
-
 	// check if cell has any unseen neighbors  --> I think we have to do this in the maze class
 	bool hasUnseenNeighbors();
 	*/
@@ -60,7 +66,7 @@ public:
 	// returns the label of the neighbor at the desired index
 	int getNeighbor(int idx);
 	// returns a vector of labels of available cells to move to
-	std::vector<int> getAvailableNeighbors(); 
+	std::vector<int> getAvailableNeighbors();
 
 	// returns the array of walls
 	bool getWalls() { return walls; }
@@ -68,5 +74,5 @@ public:
 	void setWall(int index, bool set) { walls[index] = set; }
 
 	// draws the cell with corresponding walls --> local coordinates
-	void drawCell(double centerX, double centerY);
+	void drawCell();
 };
