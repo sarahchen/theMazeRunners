@@ -32,12 +32,6 @@ private:
 	bool seen;		// visited if true;	
 	int label;
 
-	// array of neighbor labels --> 
-	// index 0 is above neighbor and go around to the right
-	int neighbors[6];
-
-	bool walls[6];	// if true, there is a wall
-
 	// list of neighbors that do not have a wall in between them
 	std::vector<int> availableNeighbors;
 
@@ -52,6 +46,12 @@ private:
 	std::vector<node> cellNodes;
 
 public:
+
+	// array of neighbor labels --> 
+	// index 0 is above neighbor and go around to the right
+	int neighbors[6];
+	bool walls[6];	// if true, there is a wall
+
 	Cell() {};
 
 	// Initialize Cell
@@ -70,11 +70,10 @@ public:
 
 	// returns the label of the neighbor at the desired location (top bottom etc)
 	int getNeighbor(int idx);
-
-	// sets list to the list of all neighbor labels
-	void getAllNeighbors(int list[6]) { list = neighbors; }
 	// returns a vector of labels of available cells to move to
 	std::vector<int> getAvailableNeighbors();
+	// returns a vector of all neighbor labels
+	std::vector<int> getAllNeighbors();
 
 	// returns the array of walls
 	bool getWalls() { return walls; }

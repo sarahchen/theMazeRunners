@@ -1,12 +1,17 @@
 #include "Maze.h"
+#include <time.h>
 
 // initialize Grid for the maze
 Maze::Maze() 
 {
-    // for now, 10x10 Grid of Hexagons
+    // for now, 10x16 Grid of Hexagons
+    numRows = 10;
+    numCols = 16;
     
-    rowSize = 10;
-    colSize = 16;
+    // rowSize: size of each row
+    // colSize: size of each column
+    int rowSize = numCols;
+    int colSize = numRows;
     
     int gridX, gridY;
     double centerX, centerY;
@@ -14,12 +19,12 @@ Maze::Maze()
     for(int i = 1; i < GRID_SIZE + 1; i++) {
 
         // Determine centerX and centerY for current Cell
-        // Using Convention 1 from Cell.cpp
+        // Using Convention stated in Cell.cpp
 
-        gridX = i % colSize;
-        gridY = (i / colSize) + 1;
+        gridX = i % numCols;
+        gridY = (i / numCols) + 1;
         if (gridX == 0) { 
-            gridX = colSize;
+            gridX = numCols;
             gridY = gridY - 1;
         }
         
@@ -37,20 +42,31 @@ bool Maze::searchNext(int currCell, int& nextCell)
     Cell* current = &Grid[currCell];
 
     std::vector<int> unseenNeighbors;
-    int allNeighbors[6];
-    current->getAllNeighbors(allNeighbors);
+    std::vector<int> allNeighbors;
+    allNeighbors = current->getAllNeighbors();
+
     getUnseenNeighbors(currCell, unseenNeighbors);
 
     if (unseenNeighbors.size() != 0)
     {
         // Randomly pick an available neighbor
         nextCell = unseenNeighbors[rand() % unseenNeighbors.size()];
+        Cell* next = &Grid[nextCell];
 
         // Set Wall in that direction to false
-        int* idx = std::find(std::begin(allNeighbors), std::end(allNeighbors), nextCell);
-        if (idx != std::end(allNeighbors))
-        {
-            current->setWall(*idx, false);
+        auto it = std::find(allNeighbors.begin(), allNeighbors.end(), nextCell);
+        if (it != allNeighbors.end()) {
+            int index = std::distance(allNeighbors.begin(), it);
+            current->setWall(index, false);
+        }
+
+        // Set Wall in of nextCell to false
+        std::vector<int> nextNeighbors;
+        nextNeighbors = next->getAllNeighbors();
+        it = std::find(nextNeighbors.begin(), nextNeighbors.end(), currCell);
+        if (it != nextNeighbors.end()) {
+            int index = std::distance(nextNeighbors.begin(), it);
+            next->setWall(index, false);
         }
 
         return true;
@@ -65,15 +81,16 @@ void Maze::getUnseenNeighbors(int currCell, std::vector<int>& unseenList)
 
     /*--- Create list of available neighbors ---*/
     // Get all neighbors of the cell
-    int allNeighbors[6];
-    current->getAllNeighbors(allNeighbors);
+    std::vector<int> allNeighbors;
+    allNeighbors = current->getAllNeighbors();
 
     // iterate through them and check if seen
     // if not seen, add to unseenList
+    int label;
     for (int i = 0; i < 6; i++)
     {
-        int label = allNeighbors[i];
-        if (Grid[label].isSeen() == false) {
+        label = allNeighbors[i];
+        if (label != 0 && Grid[label].isSeen() == false) {
             unseenList.push_back(label);
         }
     }
@@ -81,6 +98,9 @@ void Maze::getUnseenNeighbors(int currCell, std::vector<int>& unseenList)
 
 void Maze::generateMaze()
 {
+    // Initialize random seed
+    srand(time(0));
+
     // Initialize the Starting Cell
     Cell* startCell = &Grid[1];
     // Mark starting cell as visited and push it to the stack
@@ -92,23 +112,23 @@ void Maze::generateMaze()
 
     // while the stack is not empty...
     while(!VisitedCells.empty()) {
-
-        // pop the current cell from the stack 
+        // get the current cell from the stack 
         lbl = VisitedCells.top();
-        VisitedCells.pop();
-
         currentCell = &Grid[lbl];
 
         // if the current cell has any unseen neighbors
         // choose one as the next cell, mark it seen, and push to stack
         std::vector<int> unseenNeighbors;
         if(searchNext(lbl, nextlbl)) {
+            std::cout << lbl << std::endl;
             Grid[nextlbl].setSeen();
             VisitedCells.push(nextlbl);
         }
-
         // if the current cell has no unseen neighbors, pop visited cells
         // until we find a cell with unseen neighbors
+        else {
+            VisitedCells.pop();
+        }
     }
 }
 

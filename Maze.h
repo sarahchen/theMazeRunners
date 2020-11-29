@@ -12,13 +12,14 @@ class ViewManager;
 
 class Maze {
 private:
+
+    // Number of rows and columns in the Grid
+    int numRows, numCols;
+
     std::unordered_map<int, Cell> Grid;
     std::stack<int> VisitedCells;
     
 public:
-    
-    int rowSize, colSize;
-    
     Maze();
 
     //returns the unordered map of cells that compose the maze grid
