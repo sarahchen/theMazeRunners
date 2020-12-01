@@ -56,4 +56,8 @@ public:
     //placeholder for now, needs to have access to player position, somehow
     //returns euclidean distance from desired point to the player position
     double calcHeuristic(Cell searchCell);
+
+    bool checkWallContact(node cellNode1, node cellNode2, node p1, node p2);
+    int checkOrientation(node one, node two, node three);
+    bool validCharMove(Character aCharacter);
 };

@@ -90,18 +90,14 @@ void Model::initializeEnemy()
 
 void Model::update(ViewManager& theManager)
 {
-
-	//Sarah this is for you to complete! The front looks at the two two front corners of the car, and the back one looks at the back two corners
-	//here are the four corner positions! Return true if neither corner is hitting an obstacle, else return false
-
-	double ax = theCharacter.getAx(), ay = theCharacter.getAy(), bx = theCharacter.getBx(), by = theCharacter.getBy();
-	double cx = theCharacter.getCx(), cy = theCharacter.getCy(), dx = theCharacter.getDx(), dy = theCharacter.getDy();
-
-	// if (theMaze.validCharMove(ax,ay,dx,dy)) {willHitObstacleFront = false;}
-	// else { willHitObstacleFront = true; }
-
-	// if (theMaze.validCharMove(bx,by,cx,cy)) {willHitObstacleback = false;}
-	// else { willHitObstacleBack = true; }
+	// Testing of validCharMove
+	if (theMaze.validCharMove(theCharacter))
+	{
+		cout << "Valid Character Move!" << endl;
+	}
+	else {
+		cout << "Not a valid CHaracter Move" << endl;
+	}
 
 	theCharacter.updateKinematics(.1);
 	theCharacter.draw();

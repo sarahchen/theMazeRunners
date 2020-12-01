@@ -6,7 +6,7 @@ Maze::Maze()
 {
     // for now, 10x16 Grid of Hexagons
     numRows = 10;
-    numCols = 16;
+    numCols = GRID_SIZE / numRows;
     
     // rowSize: size of each row
     // colSize: size of each column
@@ -139,7 +139,6 @@ void Maze::generateMaze()
         // choose one as the next cell, mark it seen, and push to stack
         std::vector<int> unseenNeighbors;
         if(searchNext(lbl, nextlbl)) {
-            std::cout << lbl << std::endl;
             Grid[nextlbl].setSeen();
             VisitedCells.push(nextlbl);
         }
@@ -153,18 +152,18 @@ void Maze::generateMaze()
 
 void Maze::drawMaze()
 {
-    // draw maze
-    // for each side of the cube, just draw that side?
-    // side goes from 1-6
-    
-    // for (int side = 1; side < 7; side++) {
-        int side = 1;
-        int cellIdx = 0;
-        for (int i = 1; i < GRID_SIZE+1; i++) {
-            cellIdx = i * side;
-            Grid[cellIdx].drawCell();
-        }
-    // }
+    // setMazeColor
+    glColor3ub(255, 0, 0);
+    int side = 1;
+    int cellIdx = 0;
+    for (int i = 1; i < GRID_SIZE+1; i++) {
+        cellIdx = i * side;
+        Grid[cellIdx].drawCell();
+    }
+
+    // Highlight player cell
+    glColor3ub(0, 0, 255);
+    playerCell.drawCell();
 }
 
 //finds the cell that the player is currently in and sets that variable in Maze
@@ -174,9 +173,9 @@ void Maze::setPlayerCell(Character thePlayer)
     double playerY = thePlayer.getY();
 
     //start by checking the cell that the player was previously in
-    double cellX = playerCell.getCenterX();
     double cellY = playerCell.getCenterY();
 
+    double cellX = playerCell.getCenterX();
     double dX = playerX - cellX;
     double dY = playerY - cellY;
 
@@ -219,4 +218,68 @@ double Maze::calcHeuristic(Cell searchCell) {
     double dist = sqrt(dX * dX + dY * dY)/ (2*searchCell.getRadius());
     
     return dist;
+}
+
+// Checks if the line between cellNode1 and cellNode2 intersects the line from p1 to p2
+// uses this line intersection method:
+// https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+// returns true if in contact
+bool Maze::checkWallContact(node cellNode1, node cellNode2, node p1, node p2)
+{
+    if ((checkOrientation(cellNode1, cellNode2, p1) != checkOrientation(cellNode1, cellNode2, p2))
+        && (checkOrientation(p1, p2, cellNode1) != checkOrientation(p1, p2, cellNode2))) {
+        return true;
+    }
+
+    return false;
+}
+
+// Checks orientation of three points
+// returns 0 if colinear, 1 cw, 2 ccw
+int Maze::checkOrientation(node one, node two, node three)
+{
+    int val = (two.y - one.y) * (three.x - two.x) -
+        (two.x - one.x) * (three.y - two.y);
+
+    if (val == 0) {
+        return 0;
+    }
+    else if (val > 0) {
+        return 1;
+    }
+    else {
+        return 2;
+    }
+
+}
+
+// Check if front or back of player intersects with cell walls
+// uses playerCell
+// returns true if character does NOT contact
+bool Maze::validCharMove(Character thePlayer)
+{
+    // sets cell that the player is in
+    setPlayerCell(thePlayer);
+
+    // gets 4 corners of car and check if each side is moveable
+    node a = { thePlayer.getAx(), thePlayer.getAy() };
+    node b = { thePlayer.getBx(), thePlayer.getBy() };
+    node c = { thePlayer.getCx(), thePlayer.getCy() };
+    node d = { thePlayer.getDx(), thePlayer.getDy() };
+
+    // iterate through every wall and check
+    for (int i = 0; i < 6; i++) {
+
+        // if wall exists, check if it intersects with player
+        if (playerCell.walls[i]) {
+            // if the wall intersects with top or bottom of player, return false
+            if (checkWallContact(playerCell.getNode(i), playerCell.getNode((i+1)%6), a, d) ||
+                checkWallContact(playerCell.getNode(i), playerCell.getNode((i+1)%6), b, c)) {
+                std::cout << "In Cell: " << playerCell.getLabel() << " Failed at Wall: " << i << std::endl;
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

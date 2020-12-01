@@ -18,14 +18,14 @@ commented in to show what I was going for.
 #define PI 3.1415926
 #define CELL_RADIUS 25
 
+struct node {
+	double x;
+	double y;
+};
+
 class Cell {
 
 private:
-	struct node {
-		double x;
-		double y;
-	};
-
 	int rowSize, colSize;
 	double radius;
 	double centerX, centerY;
@@ -58,6 +58,7 @@ public:
 	Cell(int alabel, int mazeRowSize, int mazeColSize, double cx, double cy);
 
 	void setNodes();
+	node getNode(int index) { return cellNodes[index]; }
 
 	bool isSeen() { return seen; }
 	void setSeen() { seen = true; }

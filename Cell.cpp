@@ -138,16 +138,6 @@ std::vector<int> Cell::getAllNeighbors()
 void Cell::drawCell()
 {
 	// set up local coordinate system in the Maze class when drawing each node
-	// set wall color
-	if (seen) {
-		glColor3ub(255, 0, 0);
-	}
-	else {
-		glColor3ub(0, 0, 255);
-	}
-	// draw the walls in 
-	//glLoadIdentity();
-	//glTranslatef(centerX, centerY, 0);
 
 	if (walls[0]) {
 		glBegin(GL_LINE_STRIP);
