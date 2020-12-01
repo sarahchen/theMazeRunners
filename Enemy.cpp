@@ -1,37 +1,41 @@
-#include "Enemy.h"
 #include <queue>
+#include <unordered_set>
+#include "Enemy.h"
+
+#define LINEAR_INDEX(X, Y, XSIZE, YSIZE) ((Y-1)*XSIZE + (X-1))
 
 using namespace std;
 
-void Enemy::spawn(int locX, int locY)
+void Enemy::spawn(Cell spawnCell)
 {
-	setX(locX);
-	setY(locY);
-	draw();
+	currentLocation = spawnCell;
 }
 
 //draw enemy about center
 void Enemy::draw()
 {
-	int halfsize = 10; //this should probably be a property
-	glTranslatef(posCenter.x, posCenter.y, 0);
-	//placeholder for now...draw a blue square
-	glColor3ub(0, 0, 200);
+	double centerX = currentLocation.getCenterX();
+	double centerY = currentLocation.getCenterY();
+	
+	//cout << "drawing enemy at x = " << centerX << " y = " << centerY << '\n';
+	//placeholder for now...draw a red square
+	glColor3ub(200, 0, 0);
 	glBegin(GL_QUADS);
-	glVertex2d(-halfsize, halfsize);
-	glVertex2d(-halfsize, halfsize);
-	glVertex2d(-halfsize, halfsize);
-	glVertex2d(-halfsize, halfsize);
-	glEnd;
-	//do I need to revert to identity here?
+	glVertex2d(centerX - size / 2, centerY + size / 2);
+	glVertex2d(centerX + size / 2, centerY + size / 2);
+	glVertex2d(centerX + size / 2, centerY - size / 2);
+	glVertex2d(centerX - size / 2, centerY - size / 2);
+	glEnd();
+	glLoadIdentity();
+
 }
 
 //moves enemy to the next position from the movement plan
 void Enemy::move()
 {
 	if (!movementPlan.empty()) {
-		posCenter.x = movementPlan.back().first;
-		posCenter.y = movementPlan.back().second;
+		
+		currentLocation = movementPlan.back();
 		movementPlan.pop_back();
 	}
 }
@@ -40,87 +44,99 @@ void Enemy::move()
 //mostly borrowed from PS09
 void Enemy::findBestPath(Maze theMaze)
 {
+	int numRows = theMaze.getNumRows();
+	int numCols = theMaze.getNumCols();
+	
 	//make my own struct to hold coordinate info
-	struct Node { 
-		double x, y, fCost;
+	struct Node {
+		int cell_label;
+		double g, h;
 	};
-	struct compareNode {
+	struct NodeCompareF {
 		bool operator()(Node const& n1, Node const& n2) {
 			// return "true" if "n1" is ordered after "n2”:
-			return n1.fCost > n2.fCost;
+			return (n1.g + n1.h) > (n2.g + n2.h);
 		}
 	};
-	priority_queue<Node, vector<Node>, compareNode> processQueue;
 
-	//will need to build this as unordered maps
-	bool isInQueue[theMaze.rowSize][theMaze.colSize];
-	int gScore[theMaze.rowSize][theMaze.colSize];
-	int parent[theMaze.rowSize][theMaze.colSize]; //array of labels of parents
+	priority_queue<Node, vector<Node>, NodeCompareF> open_list_q;
+	unordered_set<int> open_list_m;
+	unordered_set<int> closed_list;
+	unordered_map<int, int> parent_list; //first int is child, second int is parent
 
-	for (int i = 1; i <= theMaze.rowSize; i++) {
-		for (int j = 1; j <= theMaze.colSize; j++) {
-			isInQueue[i][j] = false;
-			gScore[i][j] = INT_MAX;
-			parent[i][j] = -1;
-		}
-	}
+	//set start location
+	Node startNode = { currentLocation.getLabel(), 0, theMaze.calcHeuristic(currentLocation)};
+	parent_list[currentLocation.getLabel()] = -1;
 
-	//need to get a heuristic function into ViewManager, Model
-	Node startNode = { posCenter.x , posCenter.y, theMaze.calcHeuristic(posCenter.x, posCenter.y) };
-	gScore[startNode.x][startNode.y] = 0;
-	processQueue.push(startNode);
-	isInQueue[startNode.x][startNode.y] = true;
+	//run the A* search while open list is empty
+	Node currNode = startNode;
+	Cell currCell = theMaze.getCell(currNode.cell_label);
+	open_list_q.push(currNode);
+	open_list_m.insert(currNode.cell_label);
 
-	//run the A* search
-	Node currNode;
 	bool foundGoal = false;
-	while (!foundGoal && !processQueue.empty()) {
-		currNode = processQueue.top();   // copy the node at front of queue
-		processQueue.pop();               // remove node at front of queue
-		isInQueue[currNode.x][currNode.y] = false;
+	while (!foundGoal && !open_list_q.empty()) {
 
-		//maybe change this to refer directly to player coords
-		if (theMaze.calcHeuristic(currNode.x, currNode.y) == 0) { 
+		//grab node with smallest f value
+		currNode = open_list_q.top();
+		currCell = theMaze.getCell(currNode.cell_label);
+		open_list_q.pop();
+		open_list_m.erase(currNode.cell_label);
+
+		//add node to closed list
+		closed_list.insert(currNode.cell_label);
+
+		//if current node is the goal, stop the search
+		//cout << "h val = " << theMaze.calcHeuristic(currCell) << '\n';
+		if (theMaze.calcHeuristic(currCell) == 0) {
 			foundGoal = true;
+			//cout << "found goal\n";
 			break;
 		}
 
-		//need to write the function that returns x,y vals of neighbors
-		vector<pair<int, int>> neighborCoords = theMaze.getNeighborCoords(currNode.x, currNode.y);
+		//evaluate successors of current node
+		vector<int> neighborLabels = currCell.getAvailableNeighbors();
 
-		for (int idx = 0; idx < neighborCoords.size(); idx++) {
+		for (int idx = 0; idx < neighborLabels.size(); idx++) {
 
-			int neighX = neighborCoords[idx].first;
-			int neighY = neighborCoords[idx].second;
+			int neighborLabel = neighborLabels[idx];
 
-			int testGscore = gScore[neighX][neighY] + 1; //no unique cell costs, for now
+			//check if node is not already on the closed list
+			if (closed_list.find(neighborLabel) == closed_list.end()) {
 
-			if (testGscore < gScore[neighX][neighY]) {
-				parent[neighX][neighY] = neighX * theMaze.colSize + neighY;
-				gScore[neighX][neighY] = testGscore;
+				Cell succCell = theMaze.getCell(neighborLabel);
+				Node succNode = { neighborLabel, currNode.g + 1, theMaze.calcHeuristic(succCell)};
+				parent_list[succNode.cell_label] = currNode.cell_label;
 
-				if (!isInQueue[neighX][neighY]) {
-					Node testNode = { neighX, neighY, testGscore + theMaze.calcHeuristic(neighX, neighY) };
-					processQueue.push(testNode);
-					isInQueue[neighX][neighY] = true;
+				//if not already on the open list, put it on there
+				if (open_list_m.find(neighborLabel) == open_list_m.end()) {
+					open_list_q.push(succNode);
+					open_list_m.insert(succNode.cell_label);
 				}
 			}
 		}
 	}
+	//cout << "ended search " << closed_list.size() << '\n';
 
-	//if player was found, populate the movement plan
+	////if player was found, populate the movement plan
 	if (foundGoal) {
 		
-		movementPlan.push_back(make_pair(currNode.x, currNode.y));
-		
-		int nextParent = parent[currNode.x][currNode.y];
-		while (nextParent > 0) {
-			int currX = nextParent / theMaze.colSize;
-			int currY = nextParent % theMaze.colSize;
+		movementPlan.clear();
 
-			movementPlan.push_back(make_pair(currX, currY));
+		movementPlan.push_back(currCell);
+		auto out = parent_list.find(currCell.getLabel());
+		int nextParentLabel = out->second;
 
-			nextParent = parent[currX][currY];
+		while (nextParentLabel > 0) {
+			
+			currCell = theMaze.getCell(nextParentLabel);
+
+			movementPlan.push_back(currCell);
+			auto out = parent_list.find(currCell.getLabel());
+			nextParentLabel = out->second;
+			//cout << "parent label = " << nextParentLabel << '\n';
 		}
+		movementPlan.pop_back();
+		//cout << "movement plan completed\n";
 	}
 }

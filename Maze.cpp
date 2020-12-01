@@ -37,6 +37,25 @@ Maze::Maze()
     }
 }
 
+Cell Maze::getRandomCell()
+{
+    // Initialize random seed
+    srand(time(0));
+
+    //find random number in the range of generated cells
+    int randIdx = rand() % (numRows * numCols) + 1;
+    auto out = Grid.find(randIdx);
+
+    return out->second;
+
+}
+
+Cell Maze::getCell(int label)
+{
+    auto out = Grid.find(label);
+    return out->second;
+}
+
 bool Maze::searchNext(int currCell, int& nextCell)
 {
     Cell* current = &Grid[currCell];
@@ -132,7 +151,7 @@ void Maze::generateMaze()
     }
 }
 
-void Maze::drawMaze(ViewManager& theManager)
+void Maze::drawMaze()
 {
     // draw maze
     // for each side of the cube, just draw that side?
@@ -148,17 +167,56 @@ void Maze::drawMaze(ViewManager& theManager)
     // }
 }
 
-//placeholder for now, needs to have access to player position, somehow
-//returns euclidean distance from desired point to the player position
-double Maze::calcHeuristic(double posX, double posY) {
-    
-    double playerPosX = 10; //obviously needs to be changed
-    double playerPosY = 10; //obviously needs to be changed
-    
-    double dX = posX - playerPosX; //sign doesn't matter because it will be squared later
-    double dY = posY - playerPosY; //sign doesn't matter because it will be squared later
+//finds the cell that the player is currently in and sets that variable in Maze
+void Maze::setPlayerCell(Character thePlayer)
+{
+    double playerX = thePlayer.getX();
+    double playerY = thePlayer.getY();
+
+    //start by checking the cell that the player was previously in
+    double cellX = playerCell.getCenterX();
+    double cellY = playerCell.getCenterY();
+
+    double dX = playerX - cellX;
+    double dY = playerY - cellY;
 
     double dist = sqrt(dX * dX + dY * dY);
+    //cout << "short search, player cell = " << playerCell.getLabel() << '\n';
+    //only check all other cells if player is outside the current cell
+    if (dist > playerCell.getRadius()) {
+        for (auto check : Grid) {
+
+            Cell checkCell = check.second;
+
+            cellX = checkCell.getCenterX();
+            cellY = checkCell.getCenterY();
+
+            dX = playerX - cellX;
+            dY = playerY - cellY;
+            dist = sqrt(dX * dX + dY * dY);
+
+            if (dist <= checkCell.getRadius()) {
+                playerCell = checkCell;
+                //cout << "long search, player cell = " << playerCell.getLabel() << '\n';
+                break;
+            }
+        }
+    }
+}
+
+//returns euclidean distance from desired point to the player position
+double Maze::calcHeuristic(Cell searchCell) {
+    
+    double goalX = playerCell.getCenterX();
+    double goalY = playerCell.getCenterY();
+
+    double startX = searchCell.getCenterX();
+    double startY = searchCell.getCenterY();
+    
+    double dX = startX - goalX;
+    double dY = startY - goalY;
+
+    double dist = sqrt(dX * dX + dY * dY)/ (2*searchCell.getRadius());
     
     return dist;
 }

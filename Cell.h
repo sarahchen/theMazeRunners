@@ -65,8 +65,11 @@ public:
 	int getNodeX(int nodeIdx) { return cellNodes[nodeIdx].x; }
 	int getNodeY(int nodeIdx) { return cellNodes[nodeIdx].y; }
 	// return centerX and centerY of the cell
-	int getCenterX() { return centerX; }
-	int getCenterY() { return centerY; }
+	double getCenterX() { return centerX; }
+	double getCenterY() { return centerY; }
+	double getRadius() { return radius; }
+
+	int getLabel() { return label; }
 
 	// returns the label of the neighbor at the desired location (top bottom etc)
 	int getNeighbor(int idx);

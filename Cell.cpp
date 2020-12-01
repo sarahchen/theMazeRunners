@@ -114,6 +114,7 @@ int Cell::getNeighbor(int idx)
 	}
 	return 0;
 }
+
 // This could be simpler and not reset everytime probably
 std::vector<int> Cell::getAvailableNeighbors()
 {

@@ -23,7 +23,7 @@ Model::Model()
 {
 	//window size and simulation time
 	FsGetWindowSize(width, height);
-	theMaze.generateMaze();
+
 }
 
 void Model::load()
@@ -77,6 +77,17 @@ void Model::initializeCharacter(carType car, GLuint Id)
 	theCharacter.setCarInfo(width / 6 + (2.5 / 6 * width), (3 * height / 5), car, Id);
 }
 
+void Model::initializeMaze()
+{
+	theMaze.generateMaze();
+	theMaze.setPlayerCell(theCharacter);
+}
+
+void Model::initializeEnemy()
+{
+	theEnemy.spawn(theMaze.getRandomCell());
+}
+
 void Model::update(ViewManager& theManager)
 {
 
@@ -92,9 +103,17 @@ void Model::update(ViewManager& theManager)
 	// if (theMaze.validCharMove(bx,by,cx,cy)) {willHitObstacleback = false;}
 	// else { willHitObstacleBack = true; }
 
-	// theCharacter.updateKinematics(.1);
-	// theCharacter.draw(theManager);
-	theMaze.drawMaze(theManager);
+	theCharacter.updateKinematics(.1);
+	theCharacter.draw();
+	theMaze.drawMaze();
+	
+	if (fabs(theCharacter.getVel()) > 0.3) {
+		theMaze.setPlayerCell(theCharacter);
+		theEnemy.findBestPath(theMaze);
+		//cout << "loc1\n";
+	}
+	theEnemy.move();
+	theEnemy.draw();
 }
 
 void Model::save()

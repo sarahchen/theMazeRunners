@@ -267,7 +267,7 @@ void Character::calcEdges()
 	dy = cy - thisCharacter.hei * sin(headingAngle);
 }
 
-void Character::draw(ViewManager& theManager)
+void Character::draw()
 {
 	//a is front left, b is back left, c is back right, d is front right
 	//ax = posCenter.x + thisCharacter.wid / 2 * cos(headingAngle) - thisCharacter.wid / 2 * sin(headingAngle);

@@ -27,7 +27,7 @@ struct characterFeatures {
 enum carType { lambo, F1, truck, regCar };
 
 class Character {
-private:
+protected:
 	//window width and height
 	int width, height;
 
@@ -119,7 +119,7 @@ public:
 	void updateKinematics(double deltaT);
 
 	//draw character in new location and orientation
-	void draw(ViewManager& theManager);
+	void draw();
 };
 
 //public:

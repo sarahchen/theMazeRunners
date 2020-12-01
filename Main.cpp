@@ -13,7 +13,7 @@ main file for running the program
 
 int main(void) {
 	
-	FsOpenWindow(16, 16, 800, 600, 1, "Testing FINAL Character Motion");
+	FsOpenWindow(16, 16, 800, 600, 1, "MAZE MANIA - The Maze Runners");
 	ViewManager theManager;
 	theManager.manage();
 }

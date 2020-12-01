@@ -28,7 +28,6 @@ using namespace std;
 
 ViewManager::ViewManager()
 {
-
 	//window size and simulation time
 	FsGetWindowSize(width, height);
 	selectedCar = lambo;
@@ -56,15 +55,10 @@ void ViewManager::manage()
 	int mouseEvent, lb, mb, rb;
 	int locX, locY;
 
-	//Character theCharacter(width / 6 + (2.5 / 6 * width), (3 * height / 5), selectedCar, textIds[selectionIndex]);
 	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]);
+	theModel.initializeMaze();
+	theModel.initializeEnemy();
 
-	//theCharacter.draw(*this);
-	//FsSwapBuffers();
-	//FsSleep(2000);
-
-	//FsPollDevice();
-	//while (FSKEY_ESC != (key = FsInkey())) {
 	while (!exitDesired) { // this makes the exit buttons be what quits the game
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		mouseEvent = FsGetMouseEvent(lb, mb, rb, locX, locY);
@@ -79,8 +73,10 @@ void ViewManager::manage()
 		}
 
 		else {
+
 			playScreen(locX, locY, lb);
 			key = FsInkey();
+
 			if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {
 		/*		theCharacter.goForward();
 				theCharacter.adjustOrientation(.05);*/
@@ -97,13 +93,13 @@ void ViewManager::manage()
 				/*theCharacter.goBackward();
 				theCharacter.adjustOrientation(-.05);*/
 				theModel.moveCharBackward();
-				theModel.rotateChar(-.05);
+				theModel.rotateChar(.05);
 			}
 			else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_DOWN)) {
 		/*		theCharacter.goBackward();
 				theCharacter.adjustOrientation(.05);*/
 				theModel.moveCharBackward();
-				theModel.rotateChar(.05);
+				theModel.rotateChar(-.05);
 			}
 
 			else if (FsGetKeyState(FSKEY_UP)) { theModel.moveCharForward(); } // { theCharacter.goForward(); }

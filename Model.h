@@ -19,6 +19,7 @@ Header file that creates the model
 #include "GraphicFont.h"
 #include "Character.h"
 #include "Maze.h"
+#include "Enemy.h"
 
 class Model {
 
@@ -29,6 +30,7 @@ private:
 
 	Character theCharacter;
 	Maze theMaze;
+	Enemy theEnemy;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 
@@ -58,6 +60,9 @@ public:
 
 	//assigns initial parameters to the character
 	void initializeCharacter(carType car, GLuint Id);
+
+	void initializeMaze();
+	void initializeEnemy();
 
 	//updates all aspects of the gameplay
 	void update(ViewManager& theManager);
