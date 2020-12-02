@@ -136,7 +136,7 @@ void Character::reset()
 
 void Character::updateKinematics(double deltaT)
 {
-	cout << "Force: " << Force << "    Acceleration: " << accel << "    Velocity:  "  << velocity << endl;
+	// cout << "Force: " << Force << "    Acceleration: " << accel << "    Velocity:  "  << velocity << endl;
 
 	if (isValidMove()) {
 		posCenter.x += velocity * cos(headingAngle) * deltaT;
