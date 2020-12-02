@@ -1,4 +1,5 @@
 #include "Maze.h"
+#include <algorithm>
 #include <time.h>
 
 // initialize Grid for the maze
