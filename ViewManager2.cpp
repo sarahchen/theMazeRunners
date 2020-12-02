@@ -415,12 +415,20 @@ void ViewManager::startScreen(int locX, int locY, int lb)
 void ViewManager::playScreen(int locX, int locY, int lb)
 {
 	bool onExit = false;
+	bool onMenu = false;
 	if (locX > 0 && locX < width / 6)
 		if (locY > 4.5 * height / 5 && locY < height)
 			onExit = true;
 
 	if (onExit && lb)
 		exitDesired = true;
+
+	if (locX > 0 && locX < width / 6)
+		if (locY > 4 * height / 5 && locY < 4.5 * height / 5)
+			onMenu = true;
+
+	if (onMenu && lb)
+		isPlaying = false;
 
 	drawStaticElements();
 
@@ -436,6 +444,18 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	glRasterPos2d(15, 4.8 * height / 5);
 	YsGlDrawFontBitmap12x16("EXIT GAME");
 
+	// exit to menu button on game screen
+	glColor3ub(0, 100, 100);
+	glBegin(GL_QUADS);
+	glVertex2d(0, 4 * height / 5);
+	glVertex2d(width / 6, 4 * height / 5);
+	glVertex2d(width / 6, 4.5*height/5);
+	glVertex2d(0, 4.5*height/5);
+	glEnd();
+	glColor3ub(255, 255, 255);
+	glRasterPos2d(width/20, 4.3 * height / 5);
+	YsGlDrawFontBitmap12x16("MENU");
+
 	if (onExit) {
 		glColor3ub(255, 0, 0);
 		glBegin(GL_LINE_LOOP);
@@ -443,6 +463,16 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 		glVertex2d(width / 6, 4.5 * height / 5);
 		glVertex2d(width / 6, height - 2);
 		glVertex2d(0, height - 2);
+		glEnd();
+	}
+
+	if (onMenu) {
+		glColor3ub(255, 0, 0);
+		glBegin(GL_LINE_LOOP);
+		glVertex2d(0, 4 * height / 5);
+		glVertex2d(width / 6, 4 * height / 5);
+		glVertex2d(width / 6, 4.5 * height / 5);
+		glVertex2d(0, 4.5 * height / 5);
 		glEnd();
 	}
 
