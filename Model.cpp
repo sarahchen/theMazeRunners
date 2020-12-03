@@ -23,7 +23,14 @@ Model::Model()
 {
 	//window size and simulation time
 	FsGetWindowSize(width, height);
+	damaged = false;
+	healthPercentage = 100;
+}
 
+void Model::updateHealth()
+{
+	if (caught())
+		healthPercentage -= 5;
 }
 
 void Model::load()
@@ -119,6 +126,37 @@ void Model::update(ViewManager& theManager)
 	}
 	theEnemy.move();
 	theEnemy.draw();
+}
+
+bool Model::caught()
+{
+	int enemyCell = theEnemy.getLocation().getLabel();
+	int playerCell = theMaze.getPlayerCell();
+	chrono::time_point<chrono::steady_clock> start;
+
+	if (enemyCell == playerCell && playerCell != prevPlayerCell) {
+		prevPlayerCell = playerCell;
+		start = chrono::steady_clock::now();
+		return true;
+	}
+	else if (enemyCell == playerCell && playerCell == prevPlayerCell) {
+		auto current = chrono::duration_cast<chrono::seconds>(std::chrono::steady_clock::now() - start).count();
+		if (fmod(current, 3.0) == 0.0 && damaged == false) {
+			damaged = true;
+			return true;
+		}
+		else if (fmod(current, 3.0) == 0.0 && damaged == true){
+			return false;
+		}
+		else {
+			damaged = false;
+			return false;
+		}
+	}
+	else {
+		damaged = false;
+		return false;
+	}
 }
 
 void Model::save()
