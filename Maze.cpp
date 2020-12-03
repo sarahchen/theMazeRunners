@@ -1,4 +1,5 @@
 #include "Maze.h"
+#include <algorithm>
 #include <time.h>
 
 // initialize Grid for the maze
@@ -226,10 +227,50 @@ double Maze::calcHeuristic(Cell searchCell) {
 // returns true if in contact
 bool Maze::checkWallContact(node cellNode1, node cellNode2, node p1, node p2)
 {
-    if ((checkOrientation(cellNode1, cellNode2, p1) != checkOrientation(cellNode1, cellNode2, p2))
-        && (checkOrientation(p1, p2, cellNode1) != checkOrientation(p1, p2, cellNode2))) {
+    int o1, o2, o3, o4;
+    o1 = checkOrientation(cellNode1, cellNode2, p1);
+    o2 = checkOrientation(cellNode1, cellNode2, p2);
+    o3 = checkOrientation(p1, p2, cellNode1);
+    o4 = checkOrientation(p1, p2, cellNode2);
+
+    if (o1 != o2 && o3 != o4) {
         return true;
     }
+
+    // Special Cases 
+    // p1, q1 and p2 are colinear and p2 lies on segment p1q1 
+    if (o1 == 0 && onSegment(cellNode1, p1, cellNode2)) {
+        return true;
+    }
+
+    // p1, q1 and q2 are colinear and q2 lies on segment p1q1 
+    if (o2 == 0 && onSegment(cellNode1, p2, cellNode2)) {
+        return true;
+    }
+
+    // p2, q2 and p1 are colinear and p1 lies on segment p2q2 
+    if (o3 == 0 && onSegment(p1, cellNode1, p2)) {
+        return true;
+    }
+
+    // p2, q2 and q1 are colinear and q1 lies on segment p2q2 
+    if (o4 == 0 && onSegment(p1, cellNode2, p2)) {
+        return true;
+    }
+
+    return false;
+}
+
+// Given three colinear points p, q, r, the function checks if 
+// point q lies on line segment 'pr' 
+// helper function for checkWallContact
+bool Maze::onSegment(node p, node q, node r)
+{
+    int eps = 1;
+
+    if (q.x <= (max(p.x, r.x) + eps) && q.x >= (min(p.x, r.x)-eps) &&
+        q.y <= (max(p.y, r.y)+eps) && q.y >= (min(p.y, r.y)-eps))
+        return true;
 
     return false;
 }
@@ -241,41 +282,42 @@ int Maze::checkOrientation(node one, node two, node three)
     int val = (two.y - one.y) * (three.x - two.x) -
         (two.x - one.x) * (three.y - two.y);
 
-    if (val == 0) {
-        return 0;
-    }
-    else if (val > 0) {
+    if (val > 10) {
         return 1;
     }
-    else {
+    else if (val < -10) {
         return 2;
+    }
+    else {
+        return 0;
     }
 
 }
 
 // Check if front or back of player intersects with cell walls
 // uses playerCell
+// dir = 0: front, dir = 1: back
 // returns true if character does NOT contact
-bool Maze::validCharMove(Character thePlayer)
+bool Maze::validCharMove(Character thePlayer, bool dir)
 {
     // sets cell that the player is in
     setPlayerCell(thePlayer);
-
+    node a, b;
     // gets 4 corners of car and check if each side is moveable
-    node a = { thePlayer.getAx(), thePlayer.getAy() };
-    node b = { thePlayer.getBx(), thePlayer.getBy() };
-    node c = { thePlayer.getCx(), thePlayer.getCy() };
-    node d = { thePlayer.getDx(), thePlayer.getDy() };
-
+    if (dir == 0) {
+        a = { thePlayer.getAx(), thePlayer.getAy() };
+        b = { thePlayer.getDx(), thePlayer.getDy() };
+    }
+    else {
+        a = { thePlayer.getBx(), thePlayer.getBy() };
+        b = { thePlayer.getCx(), thePlayer.getCy() };
+    }
     // iterate through every wall and check
     for (int i = 0; i < 6; i++) {
-
         // if wall exists, check if it intersects with player
         if (playerCell.walls[i]) {
             // if the wall intersects with top or bottom of player, return false
-            if (checkWallContact(playerCell.getNode(i), playerCell.getNode((i+1)%6), a, d) ||
-                checkWallContact(playerCell.getNode(i), playerCell.getNode((i+1)%6), b, c)) {
-                std::cout << "In Cell: " << playerCell.getLabel() << " Failed at Wall: " << i << std::endl;
+            if (checkWallContact(playerCell.getNode(i), playerCell.getNode((i+1)%6), a, b)) {
                 return false;
             }
         }

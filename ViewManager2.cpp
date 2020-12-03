@@ -54,8 +54,12 @@ void ViewManager::manage()
 
 	int mouseEvent, lb, mb, rb;
 	int locX, locY;
-
-	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]);
+	GLuint ID;
+	//if (selectedCar == truck) {
+	//	ID = textIdsTruck[0];
+	//}
+	//else ID = textIds[selectionIndex];	
+	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 	theModel.initializeMaze();
 	theModel.initializeEnemy();
 
@@ -66,7 +70,21 @@ void ViewManager::manage()
 		if (!isPlaying) {
 			startScreen(locX, locY, lb);
 			if (newVehicleChosen) {
-				theModel.updateCharId(selectedCar, textIds[selectionIndex]);
+				switch (selectedCar) {
+				case truck:
+					ID = textIdsTruck[color];
+					break;
+				case lambo:
+					ID = textIdsCar[color];
+					break;
+				case F1:
+					ID = textIdsF1[color];
+					break;
+				case regCar:
+					ID = textIdsRegCar[color];
+					break;
+				}
+				theModel.updateCharId(selectedCar,ID);
 				//theCharacter.assignId(selectedCar, textIds[selectionIndex]);
 				newVehicleChosen = false;
 			}
@@ -200,16 +218,42 @@ void ViewManager::prepareTheTextIds()
 	//assign png file names
 	const char* car = "car.png";
 	const char* F1 = "F1.png";
-	const char* truck = "truck.png";
+	const char* truckOrange = "truckOrange.png";
 	const char* basicCar = "basicCar.png";
 	const char* keyboard = "keyboard.png";
+	const char* truckBlue = "truckBlue.png";
+	const char* truckGreen = "truckGreen.png";
+	const char* carYellow = "carYellow.png";
+	const char* carBlue = "carBlue.png";
+	const char* carRose = "carRose.png";
+	const char* F1Red = "F1Red.png";
+	const char* F1Blue = "F1Blue.png";
+	const char* F1Green = "F1Green.png";
+	const char* regCarBlue = "regCarBlue.png";
+	const char* regCarPurple = "regCarPurple.png";
+	const char* regCarGray = "regCarGray.png";
+
 
 	//add all the text ids to the texture vector
-	createTextId(carPic, car, textIds);
+	createTextId(carPicYellow, carYellow, textIdsCar);
+	createTextId(carPicBlue, carBlue, textIdsCar);
+	createTextId(carPicRose, carRose, textIdsCar);
+
 	createTextId(F1Pic, F1, textIds);
-	createTextId(truckPic, truck, textIds);
+	createTextId(truckPicOrange, truckOrange, textIdsTruck);
 	createTextId(basicCarPic, basicCar, textIds);
 	createTextId(keyboardPic, keyboard, textIds);
+	createTextId(truckPicBlue, truckBlue, textIdsTruck);
+	createTextId(truckPicGreen, truckGreen, textIdsTruck);
+
+	createTextId(F1PicRed, F1Red, textIdsF1);
+	createTextId(F1PicBlue, F1Blue, textIdsF1);
+	createTextId(F1PicGreen, F1Green, textIdsF1);
+
+	createTextId(regCarPicPurple, regCarPurple, textIdsRegCar);
+	createTextId(regCarPicBlue, regCarBlue, textIdsRegCar);
+	createTextId(regCarPicGray, regCarGray, textIdsRegCar);
+
 }
 
 void ViewManager::startScreen(int locX, int locY, int lb)
@@ -260,6 +304,9 @@ void ViewManager::startScreen(int locX, int locY, int lb)
 
 	drawCars(locX, locY, lb);
 	drawColorSelect(locX, locY, lb);
+	monitorColorSelect(locX, locY, lb);
+
+	//colorSelect(locX, locY, lb);
 
 	// text for choose player texture ^^
 	//glColor3ub(100, 100, 100);
@@ -415,12 +462,20 @@ void ViewManager::startScreen(int locX, int locY, int lb)
 void ViewManager::playScreen(int locX, int locY, int lb)
 {
 	bool onExit = false;
+	bool onMenu = false;
 	if (locX > 0 && locX < width / 6)
 		if (locY > 4.5 * height / 5 && locY < height)
 			onExit = true;
 
 	if (onExit && lb)
 		exitDesired = true;
+
+	if (locX > 0 && locX < width / 6)
+		if (locY > 4 * height / 5 && locY < 4.5 * height / 5)
+			onMenu = true;
+
+	if (onMenu && lb)
+		isPlaying = false;
 
 	drawStaticElements();
 
@@ -436,6 +491,18 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	glRasterPos2d(15, 4.8 * height / 5);
 	YsGlDrawFontBitmap12x16("EXIT GAME");
 
+	// exit to menu button on game screen
+	glColor3ub(0, 100, 100);
+	glBegin(GL_QUADS);
+	glVertex2d(0, 4 * height / 5);
+	glVertex2d(width / 6, 4 * height / 5);
+	glVertex2d(width / 6, 4.5*height/5);
+	glVertex2d(0, 4.5*height/5);
+	glEnd();
+	glColor3ub(255, 255, 255);
+	glRasterPos2d(width/20, 4.3 * height / 5);
+	YsGlDrawFontBitmap12x16("MENU");
+
 	if (onExit) {
 		glColor3ub(255, 0, 0);
 		glBegin(GL_LINE_LOOP);
@@ -443,6 +510,16 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 		glVertex2d(width / 6, 4.5 * height / 5);
 		glVertex2d(width / 6, height - 2);
 		glVertex2d(0, height - 2);
+		glEnd();
+	}
+
+	if (onMenu) {
+		glColor3ub(255, 0, 0);
+		glBegin(GL_LINE_LOOP);
+		glVertex2d(0, 4 * height / 5);
+		glVertex2d(width / 6, 4 * height / 5);
+		glVertex2d(width / 6, 4.5 * height / 5);
+		glVertex2d(0, 4.5 * height / 5);
 		glEnd();
 	}
 
@@ -492,7 +569,7 @@ void ViewManager::drawStaticElements()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4d(1.0, 1.0, 1.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, textIds[4]);
+	glBindTexture(GL_TEXTURE_2D, textIds[2]);
 
 	glBegin(GL_QUADS);
 
@@ -539,7 +616,7 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	if (selectedCar == lambo) { glColor4d(transpR, transpG, transpB, selected); }
 	else { glColor4d(transpR, transpG, transpB, notSelected); }
 
-	glBindTexture(GL_TEXTURE_2D, textIds[0]);
+	glBindTexture(GL_TEXTURE_2D, textIdsCar[color]);
 	glBegin(GL_QUADS);
 	glTexCoord2d(1.0, 0.0);
 	glVertex2d(width / 5, 2.25 * height / 5);
@@ -554,7 +631,7 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	if (selectedCar == F1) { glColor4d(transpR, transpG, transpB, selected); }
 	else { glColor4d(transpR, transpG, transpB, notSelected); }
 
-	glBindTexture(GL_TEXTURE_2D, textIds[1]);
+	glBindTexture(GL_TEXTURE_2D, textIdsF1[color]);
 	glBegin(GL_QUADS);
 	glTexCoord2d(1.0, 0.0);
 	glVertex2d(2 * width / 5, 2.25 * height / 5);
@@ -569,7 +646,7 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	if (selectedCar == truck) { glColor4d(transpR, transpG, transpB, selected); }
 	else { glColor4d(transpR, transpG, transpB, notSelected); }
 
-	glBindTexture(GL_TEXTURE_2D, textIds[2]);
+	glBindTexture(GL_TEXTURE_2D, textIdsTruck[color]);
 	glBegin(GL_QUADS);
 	glTexCoord2d(1.0, 0.0);
 	glVertex2d(5 * width / 9, 2.2 * height / 5);
@@ -584,7 +661,7 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	if (selectedCar == regCar) { glColor4d(transpR, transpG, transpB, selected); }
 	else { glColor4d(transpR, transpG, transpB, notSelected); }
 
-	glBindTexture(GL_TEXTURE_2D, textIds[3]);
+	glBindTexture(GL_TEXTURE_2D, textIdsRegCar[color]);
 	glBegin(GL_QUADS);
 	glTexCoord2d(0.0, 0.0);
 	glVertex2d(4 * width / 5, 2.1 * height / 5);
@@ -651,25 +728,25 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 
 
 	if (locX > lambo_leftX&& locX < lambo_rightX) {
-		if (locY > lambo_topY / 5 && locY < lambo_bottomY) {
+		if (locY > lambo_topY && locY < lambo_bottomY) {
 			drawHoverOutline(lambo_leftX, lambo_topY, lambo_rightX, lambo_bottomY);
 			onlambo = true;
 		}
 	}
-	if (locX > F1_leftX&& locX < F1_rightX) {
-		if (locY > F1_topY / 5 && locY < F1_bottomY) {
+	if (locX > F1_leftX && locX < F1_rightX) {
+		if (locY > F1_topY && locY < F1_bottomY) {
 			drawHoverOutline(F1_leftX, F1_topY, F1_rightX, F1_bottomY);
 			onF1 = true;
 		}
 	}
 	if (locX > truck_leftX&& locX < truck_rightX) {
-		if (locY > truck_topY / 5 && locY < truck_bottomY) {
+		if (locY > truck_topY && locY < truck_bottomY) {
 			drawHoverOutline(truck_leftX, truck_topY, truck_rightX, truck_bottomY);
 			onTruck = true;
 		}
 	}
-	if (locX > car_leftX&& locX < car_rightX) {
-		if (locY > car_topY / 5 && locY < car_bottomY) {
+	if (locX > car_leftX && locX < car_rightX) {
+		if (locY > car_topY && locY < car_bottomY) {
 			drawHoverOutline(car_leftX, car_topY, car_rightX, car_bottomY);
 			onCar = true;
 		}
@@ -787,32 +864,66 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	garamond.setColorRGB(0, 0, 0);
 	garamond.drawText("COLOR SELECT", width / 2.1, 3.76 * height / 5, 0.4);
 
-	glColor3ub(200, 200, 200); // filled in right triangle
-	glBegin(GL_TRIANGLES);
+
+	glColor3ub(220, 220, 220); //background box for right triangle
+	glBegin(GL_QUADS);
 	glVertex2d(2.2 * width / 3, 3.5 * height / 5);
-	glVertex2d(2.35 * width / 3, 3.65 * height / 5);
+	glVertex2d(2.33 * width / 3, 3.5 * height / 5);
+	glVertex2d(2.33 * width / 3, 3.8 * height / 5);
 	glVertex2d(2.2 * width / 3, 3.8 * height / 5);
+	glEnd();
+
+	glColor3ub(127, 230, 0); //outline for right color select box
+	glBegin(GL_LINE_LOOP);
+	glVertex2d(2.2 * width / 3, 3.5 * height / 5);
+	glVertex2d(2.33 * width / 3, 3.5 * height / 5);
+	glVertex2d(2.33 * width / 3, 3.8 * height / 5);
+	glVertex2d(2.2 * width / 3, 3.8 * height / 5);
+	glEnd();
+
+	glColor3ub(127, 255, 0); // filled in right triangle
+	glBegin(GL_TRIANGLES);
+	glVertex2d(2.23 * width / 3, 3.55 * height / 5);
+	glVertex2d(2.31 * width / 3, 3.65 * height / 5);
+	glVertex2d(2.23 * width / 3, 3.75 * height / 5);
 	glEnd();
 
 	glColor3ub(100, 100, 100); // outline right triangle
 	glBegin(GL_LINE_LOOP);
-	glVertex2d(2.2 * width / 3, 3.5 * height / 5);
-	glVertex2d(2.35 * width / 3, 3.65 * height / 5);
-	glVertex2d(2.2 * width / 3, 3.8 * height / 5);
+	glVertex2d(2.23 * width / 3, 3.55 * height / 5);
+	glVertex2d(2.31 * width / 3, 3.65 * height / 5);
+	glVertex2d(2.23 * width / 3, 3.75 * height / 5);
 	glEnd();
 
-	glColor3ub(200, 200, 200); // filled in left triangle
-	glBegin(GL_TRIANGLES);
+
+	glColor3ub(220, 220, 220); //background box for left triangle
+	glBegin(GL_QUADS);
 	glVertex2d(2.3 * width / 5, 3.5 * height / 5);
-	glVertex2d(2.07 * width / 5, 3.65 * height / 5);
+	glVertex2d(2.1 * width / 5, 3.5 * height / 5);
+	glVertex2d(2.1 * width / 5, 3.8 * height / 5);
 	glVertex2d(2.3 * width / 5, 3.8 * height / 5);
+	glEnd();
+
+	glColor3ub(127, 230, 0); //outline for left color select box
+	glBegin(GL_LINE_LOOP);
+	glVertex2d(2.3 * width / 5, 3.5 * height / 5);
+	glVertex2d(2.1 * width / 5, 3.5 * height / 5);
+	glVertex2d(2.1 * width / 5, 3.8 * height / 5);
+	glVertex2d(2.3 * width / 5, 3.8 * height / 5);
+	glEnd();
+
+	glColor3ub(127, 255, 0); // filled in left triangle
+	glBegin(GL_TRIANGLES);
+	glVertex2d(2.25 * width / 5, 3.55 * height / 5);
+	glVertex2d(2.12 * width / 5, 3.65 * height / 5);
+	glVertex2d(2.25 * width / 5, 3.75 * height / 5);
 	glEnd();
 
 	glColor3ub(100, 100, 100); // outline left triangle
 	glBegin(GL_LINE_LOOP);
-	glVertex2d(2.3 * width / 5, 3.5 * height / 5);
-	glVertex2d(2.07 * width / 5, 3.65 * height / 5);
-	glVertex2d(2.3 * width / 5, 3.8 * height / 5);
+	glVertex2d(2.25 * width / 5, 3.55 * height / 5);
+	glVertex2d(2.12 * width / 5, 3.65 * height / 5);
+	glVertex2d(2.25 * width / 5, 3.75 * height / 5);
 	glEnd();
 
 	double slopeLeftLower, slopeLeftUpper, slopeRightLower, slopeRightUpper;
@@ -833,9 +944,64 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 
 }
 
-void ViewManager::setTransparency(int locX, int locY, int lb)
+void ViewManager::monitorColorSelect(int locX, int locY, int lb)
 {
-	
+	bool onLeftColor = false, onRightColor = false;
+	//on left box check
+	if (locX > 2.1 * width / 5 && locX < 2.3 * width / 5)
+		if (locY > 3.5 * height / 5 && locY < 3.8 * height / 5) {
+			onLeftColor = true;
+			glColor3ub(240, 240, 50);
+			glBegin(GL_LINE_LOOP);
+			glVertex2d(2.3 * width / 5, 3.5 * height / 5);
+			glVertex2d(2.1 * width / 5, 3.5 * height / 5);
+			glVertex2d(2.1 * width / 5, 3.8 * height / 5);
+			glVertex2d(2.3 * width / 5, 3.8 * height / 5);
+			glEnd();
+		}
+
+	//on right box check
+	if (locX > 2.2 * width / 3 && locX < 2.33 * width / 3)
+		if (locY > 3.5 * height / 5 && locY < 3.8 * height / 5) {
+			onRightColor = true;
+			glColor3ub(240, 240, 50); //outline for right color select box
+			glBegin(GL_LINE_LOOP);
+			glVertex2d(2.2 * width / 3, 3.5 * height / 5);
+			glVertex2d(2.33 * width / 3, 3.5 * height / 5);
+			glVertex2d(2.33 * width / 3, 3.8 * height / 5);
+			glVertex2d(2.2 * width / 3, 3.8 * height / 5);
+			glEnd();
+		}
+
+	if (onLeftColor && lb) {
+		if (color == 0) color = 2;
+		else color -= 1;
+		newVehicleChosen = true;
+	}
+	if (onRightColor && lb) {
+		color = (color + 1) % 3;
+		newVehicleChosen = true;
+	}
+
+}
+
+void ViewManager::colorSelect(int locX, int locY, int lb)
+{
+	if (locX > 2.3 * width / 5 && locX < 2.2 * width / 3) {
+		if (locY > 3.5 * height / 5 && locY < 3.8 * height / 5) {
+			if (color == 0) color = 3;
+			else color -= 1;
+			newVehicleChosen = true;
+		}
+	}
+	if (locX > 2.3 * width / 5 && locX < 2.2 * width / 3) {
+		if (locY > 3.5 * height / 5 && locY < 3.8 * height / 5) {
+			if (color == 0) color = 3;
+			else color -= 1;
+			newVehicleChosen = true;
+
+		}
+	}
 
 }
 

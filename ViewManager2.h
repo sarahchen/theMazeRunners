@@ -41,12 +41,17 @@ private:
 
 	bool newVehicleChosen;		//bool to register event of switching selected car
 	int selectionIndex;			//"index" or car number of car selected
+	int color = 0;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 
 	//graphics to be displayed
-	vector<GLuint> textIds;
-	YsRawPngDecoder carPic, F1Pic, truckPic, basicCarPic;
+	vector<GLuint> textIds, textIdsTruck, textIdsCar, textIdsF1, textIdsRegCar;
+	YsRawPngDecoder F1Pic, basicCarPic;
+	YsRawPngDecoder truckPicOrange, truckPicBlue, truckPicGreen;
+	YsRawPngDecoder carPicYellow, carPicBlue, carPicRose;
+	YsRawPngDecoder F1PicRed, F1PicBlue, F1PicGreen;
+	YsRawPngDecoder regCarPicBlue, regCarPicPurple, regCarPicGray;
 	YsRawPngDecoder keyboardPic;
 	double transpR, transpG, transpB;
 
@@ -124,9 +129,10 @@ public:
 
 	//outlines color section button
 	void drawColorSelect(int locX, int locY, int lb);
+	void monitorColorSelect(int locX, int locY, int lb);
 
 	//adjusts the transparency of the selected car
-	void setTransparency(int locX, int locY, int lb);
+	void colorSelect(int locX, int locY, int lb);
 	//void setCarSelection(bool &selection, bool *selectionOptions);
 	//void drawHoverOutline(int leftX, int topY, int rightX, int bottomY);
 };

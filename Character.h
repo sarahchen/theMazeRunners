@@ -104,6 +104,9 @@ public:
 	bool isValidMove();
 	bool isValidOrientation();
 	void checkMove();
+	
+	void setObstacleFront(bool val) { willHitObstacleFront = val; }
+	void setObstacleBack(bool val) { willHitObstacleBack = val; }
 
 	//calculates the four corners of the texture ID
 	void calcEdges();

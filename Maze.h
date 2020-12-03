@@ -58,6 +58,7 @@ public:
     double calcHeuristic(Cell searchCell);
 
     bool checkWallContact(node cellNode1, node cellNode2, node p1, node p2);
+    bool onSegment(node p, node q, node r);
     int checkOrientation(node one, node two, node three);
-    bool validCharMove(Character aCharacter);
+    bool validCharMove(Character aCharacter, bool dir);
 };

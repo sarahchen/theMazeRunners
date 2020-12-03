@@ -91,12 +91,21 @@ void Model::initializeEnemy()
 void Model::update(ViewManager& theManager)
 {
 	// Testing of validCharMove
-	if (theMaze.validCharMove(theCharacter))
-	{
-		cout << "Valid Character Move!" << endl;
+	// If it is a validCharMove, there is no obstacle
+
+	// Test Front
+	if (theMaze.validCharMove(theCharacter, 0)) {
+		theCharacter.setObstacleFront(false);
 	}
 	else {
-		cout << "Not a valid CHaracter Move" << endl;
+		theCharacter.setObstacleFront(true);
+	}
+	// Test Back
+	if (theMaze.validCharMove(theCharacter, 1)) {
+		theCharacter.setObstacleBack(false);
+	}
+	else {
+		theCharacter.setObstacleBack(true);
 	}
 
 	theCharacter.updateKinematics(.1);
