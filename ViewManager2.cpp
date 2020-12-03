@@ -474,8 +474,14 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 		if (locY > 4 * height / 5 && locY < 4.5 * height / 5)
 			onMenu = true;
 
-	if (onMenu && lb)
+	if (onMenu && lb) {
 		isPlaying = false;
+		// re-init everything when return to menu
+		theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+		theModel.initializeMaze();
+		theModel.initializeEnemy();
+		theModel.setHealthPercentage(100);
+	}
 
 	drawStaticElements();
 
@@ -534,6 +540,21 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	/*glColor3ub(0, 0, 0);
 	glRasterPos2d(width / 3 + 20, 3 * height / 5);
 	YsGlDrawFontBitmap20x32("THE GAME GOES HERE");*/
+
+	theModel.updateHealth();
+
+	// health percentage
+	//green
+	if (theModel.getHealthPercentage() > 66)
+		impact.setColorRGB(0, 255, 0);
+	// yellow
+	else if (theModel.getHealthPercentage() < 66 && theModel.getHealthPercentage() > 33)
+		impact.setColorRGB(255, 255, 0);
+	// red 
+	else
+		impact.setColorRGB(255, 0, 0);
+	impact.drawText((std::to_string(theModel.getHealthPercentage()) + "%").c_str(), 8.75 * width / 10, height / 6, 0.7);
+	impact.drawText("Health", 8.6 * width / 10, height / 10, 0.6);
 }
 
 void ViewManager::drawStaticElements()
@@ -548,7 +569,7 @@ void ViewManager::drawStaticElements()
 	glEnd();
 	// draw the game title  >>>>>> will need to tweak the location <<<<<<
 	oldEnglish.setColorRGB(255, 255, 255);
-	oldEnglish.drawText("Maze Mania", 60, height / 5, 1.3);
+	oldEnglish.drawText("Maze Mania", width/25, height / 5, 1.3);
 	// box at the size of the screen for controls and leaderboard
 	glColor3ub(192, 192, 192);
 	glBegin(GL_QUADS);
