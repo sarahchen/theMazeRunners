@@ -115,6 +115,8 @@ public:
 	//draws the static elements that are present in both start and play screens (such as game title)
 	void drawStaticElements();
 
+	void saveScreen(int score);
+
 	//draws the four cars to choose from
 	void drawCars(int locX, int locY, int lb);
 
@@ -135,6 +137,8 @@ public:
 	void colorSelect(int locX, int locY, int lb);
 	//void setCarSelection(bool &selection, bool *selectionOptions);
 	//void drawHoverOutline(int leftX, int topY, int rightX, int bottomY);
+
+
 };
 
 
