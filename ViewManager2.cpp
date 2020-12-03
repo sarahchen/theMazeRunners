@@ -11,6 +11,7 @@ file that orchestrates the model and view
 
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <utility>
@@ -91,79 +92,89 @@ void ViewManager::manage()
 		}
 
 		else {
+			if (theModel.getHealthPercentage() > 0) {
+				playScreen(locX, locY, lb);
+				key = FsInkey();
 
-			playScreen(locX, locY, lb);
-			key = FsInkey();
+				if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {
+					/*		theCharacter.goForward();
+							theCharacter.adjustOrientation(.05);*/
+					theModel.moveCharForward();
+					theModel.rotateChar(.05);
+				}
+				else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_UP)) {
+					/*		theCharacter.goForward();
+							theCharacter.adjustOrientation(-.05);*/
+					theModel.moveCharForward();
+					theModel.rotateChar(-.05);
+				}
+				else if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_DOWN)) {
+					/*theCharacter.goBackward();
+					theCharacter.adjustOrientation(-.05);*/
+					theModel.moveCharBackward();
+					theModel.rotateChar(.05);
+				}
+				else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_DOWN)) {
+					/*		theCharacter.goBackward();
+							theCharacter.adjustOrientation(.05);*/
+					theModel.moveCharBackward();
+					theModel.rotateChar(-.05);
+				}
 
-			if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {
-		/*		theCharacter.goForward();
-				theCharacter.adjustOrientation(.05);*/
-				theModel.moveCharForward();
-				theModel.rotateChar(.05);
-			}
-			else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_UP)) {
-		/*		theCharacter.goForward();
-				theCharacter.adjustOrientation(-.05);*/
-				theModel.moveCharForward();
-				theModel.rotateChar(-.05);
-			}
-			else if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_DOWN)) {
-				/*theCharacter.goBackward();
-				theCharacter.adjustOrientation(-.05);*/
-				theModel.moveCharBackward();
-				theModel.rotateChar(.05);
-			}
-			else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_DOWN)) {
-		/*		theCharacter.goBackward();
-				theCharacter.adjustOrientation(.05);*/
-				theModel.moveCharBackward();
-				theModel.rotateChar(-.05);
-			}
+				else if (FsGetKeyState(FSKEY_UP)) { theModel.moveCharForward(); } // { theCharacter.goForward(); }
+				else if (FsGetKeyState(FSKEY_RIGHT)) {
+					/*		theCharacter.adjustOrientation(-.1);
+							theCharacter.setForce(0);*/
+					theModel.rotateChar(-.1);
+					theModel.zeroCharForce();
+				}
+				else if (FsGetKeyState(FSKEY_LEFT)) {
+					/*	theCharacter.adjustOrientation(.1);
+						theCharacter.setForce(0);*/
+					theModel.rotateChar(.1);
+					theModel.zeroCharForce();
+				}
+				else if (FsGetKeyState(FSKEY_DOWN)) { theModel.moveCharBackward(); } // { theCharacter.goBackward(); }
 
-			else if (FsGetKeyState(FSKEY_UP)) { theModel.moveCharForward(); } // { theCharacter.goForward(); }
-			else if (FsGetKeyState(FSKEY_RIGHT)) {
-		/*		theCharacter.adjustOrientation(-.1);
-				theCharacter.setForce(0);*/
-				theModel.rotateChar(-.1);
-				theModel.zeroCharForce();
+				else { theModel.zeroCharForce(); } //{ theCharacter.setForce(0); }
+
+				//else {
+				//	switch (key) {
+				//	case FSKEY_UP:
+				//		//theCharacter.adjustAcceleration(.2);
+				//		theCharacter.goForward();
+				//		break;
+				//	case FSKEY_DOWN:
+				//		//theCharacter.adjustAcceleration(-.2);
+				//		theCharacter.goBackward();
+				//		break;
+				//	case FSKEY_LEFT:
+				//		theCharacter.adjustOrientation(.05);
+				//		break;
+				//	case FSKEY_RIGHT:
+				//		theCharacter.adjustOrientation(-.05);
+				//		break;
+				//	default:
+				//		theCharacter.setForce(0);
+				//		//	theCharacter.adjustAcceleration(-.005);
+				//		//	if (!(abs(double(theCharacter.getVel())) < 2.0)){theCharacter.adjustForce(-20);}
+				//		break;
+				//	}
+				//}
+
+				/*theCharacter.updateKinematics(.1);
+				theCharacter.draw(*this);*/
+				theModel.update(*this);
 			}
-			else if (FsGetKeyState(FSKEY_LEFT)) {
-			/*	theCharacter.adjustOrientation(.1);
-				theCharacter.setForce(0);*/
-				theModel.rotateChar(.1);
-				theModel.zeroCharForce();
+			else {
+				int score = 0; // Once we have a score this will be theModel.getScore();
+				saveScreen(score);
+				isPlaying = false;
+				theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+				theModel.initializeMaze();
+				theModel.initializeEnemy();
+				theModel.setHealthPercentage(100);
 			}
-			else if (FsGetKeyState(FSKEY_DOWN)) { theModel.moveCharBackward(); } // { theCharacter.goBackward(); }
-
-			else { theModel.zeroCharForce(); } //{ theCharacter.setForce(0); }
-
-			//else {
-			//	switch (key) {
-			//	case FSKEY_UP:
-			//		//theCharacter.adjustAcceleration(.2);
-			//		theCharacter.goForward();
-			//		break;
-			//	case FSKEY_DOWN:
-			//		//theCharacter.adjustAcceleration(-.2);
-			//		theCharacter.goBackward();
-			//		break;
-			//	case FSKEY_LEFT:
-			//		theCharacter.adjustOrientation(.05);
-			//		break;
-			//	case FSKEY_RIGHT:
-			//		theCharacter.adjustOrientation(-.05);
-			//		break;
-			//	default:
-			//		theCharacter.setForce(0);
-			//		//	theCharacter.adjustAcceleration(-.005);
-			//		//	if (!(abs(double(theCharacter.getVel())) < 2.0)){theCharacter.adjustForce(-20);}
-			//		break;
-			//	}
-			//}
-
-			/*theCharacter.updateKinematics(.1);
-			theCharacter.draw(*this);*/
-			theModel.update(*this);
 		}
 		FsSwapBuffers();
 		FsSleep(60);
@@ -622,6 +633,46 @@ void ViewManager::drawStaticElements()
 	impact.drawText("LEADERBOARD", 10, height / 2, 0.35);
 
 	theModel.drawLeaders(); //draw leaderboard
+}
+
+void ViewManager::saveScreen(int score)
+{
+	int key;
+	std::string playerName;
+
+	FsPollDevice();
+	key = FsInkey();
+	while (key != FSKEY_ENTER) {
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		string aScore = to_string(score);
+		// Show score
+		impact.setColorHSV(180, .5, .5);
+		impact.drawText("Congratulations!", width / 4, height / 11 + 20, 0.9);
+		impact.drawText("Your score was: " + aScore + " points!", width / 8, height / 6 + 20, 0.8);
+
+
+		// ask player to give a name
+		impact.setColorHSV(200, 1, 0.7);
+		impact.drawText("Enter your name to save your score.", width / 10, 3.25 * height / 10, 0.7);
+		impact.drawText("Press ENTER when done.", width / 6, 4 * height / 10, 0.5);
+
+		DrawingUtilNG::drawRectangle(width / 6, 4*height / 10 + 5, 2 * width / 3, height / 10, false);
+
+		// maybe show the existing leaderboard and the score being saved here
+
+		DrawingUtilNG::buildStringFromFsInkey(key, playerName);
+
+		impact.setColorHSV(185, 1, 0.5);
+		impact.drawText(playerName.c_str(), width / 6 + 5, height / 2, 0.4);
+
+		FsSwapBuffers();
+		FsSleep(20);
+		FsPollDevice();
+		key = FsInkey();
+	}
+	// Once the while loop finishes push playerName and score to leaders vector
+	// might need to input score to this function as a parameter
+	// will do that once we know what's going on with the score.
 }
 
 void ViewManager::drawCars(int locX, int locY, int lb)
