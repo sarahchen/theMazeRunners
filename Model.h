@@ -33,10 +33,18 @@ private:
 	Enemy theEnemy;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
+	// stored for damage mechanic (bool caught())
+	int prevPlayerCell;
+	bool damaged;
+	int healthPercentage;
 
 public:
 	//class constructor
 	Model();
+
+	int getHealthPercentage() { return healthPercentage; }
+	void setHealthPercentage(int health) { healthPercentage = health; }
+	void updateHealth();
 
 	//load the leaderboard
 	void load();
@@ -72,4 +80,8 @@ public:
 	void rotateChar(double angleAdjust) { theCharacter.adjustOrientation(angleAdjust); }
 	void zeroCharForce() { theCharacter.setForce(0); }
 	void updateCharId(carType car, GLuint Id) { theCharacter.assignId(car, Id); }
+
+	// returns true if damage required
+	// damage hit if enemy catches the player and again for every 3 seconds they are on the same cell
+	bool caught();
 };
