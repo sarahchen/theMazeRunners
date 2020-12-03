@@ -33,6 +33,8 @@ public:
 
     Cell getRandomCell();
     Cell getCell(int label);
+    // returns player cell
+    int getPlayerCell() { return playerCell.getLabel(); }
 
     // iterates through all currCell's neighbors
     // populates unseenList w lables of unseen neighbors
