@@ -274,8 +274,8 @@ void Character::calcEdges()
 void Character::draw()
 {
 	//a is front left, b is back left, c is back right, d is front right
-	//ax = posCenter.x + thisCharacter.wid / 2 * cos(headingAngle) - thisCharacter.wid / 2 * sin(headingAngle);
-	//ay = posCenter.y - thisCharacter.wid / 2 * sin(headingAngle) - thisCharacter.hei / 2 * cos(headingAngle);;
+	ax = posCenter.x + thisCharacter.hei / 2 * cos(headingAngle) - thisCharacter.wid / 2 * sin(headingAngle);
+	ay = posCenter.y - thisCharacter.hei / 2 * sin(headingAngle) - thisCharacter.wid / 2 * cos(headingAngle);
 	//bx = ax - thisCharacter.hei * cos(headingAngle);
 	//by = ay + thisCharacter.hei * sin(headingAngle);
 	//cx = bx + thisCharacter.wid * sin(headingAngle);
