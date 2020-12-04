@@ -319,3 +319,108 @@ void DrawingUtilNG::drawCube(double x1, double y1, double z1,
 
 	}
 }
+
+bool DrawingUtilNG::buildStringFromFsInkey(int key, std::string& currString)
+{
+	bool shiftIsOn = FsGetKeyState(FSKEY_SHIFT);;
+
+	// get key input (may want to move this someplace else for re-use)
+
+	if (FSKEY_A <= key && key <= FSKEY_Z) {
+		int adjustLetter = shiftIsOn ? 0 : 32;
+		currString += char(int('A') + key - FSKEY_A + adjustLetter);
+	}
+	else if (FSKEY_0 <= key && key <= FSKEY_9) {
+		if (shiftIsOn) {
+			std::string shiftOnNumerals = ")!@#$%^&*(";
+			currString += shiftOnNumerals.substr(key - FSKEY_0, 1);
+		}
+		else
+			currString += char(int('0') + key - FSKEY_0);
+	}
+	else {
+		// note that since switch jumps to proper case, 
+		// having large number of cases doesn't slow down program
+		switch (key) {
+		case FSKEY_BS: // remove last character on string
+			currString = currString.substr(0, currString.length() - 1);
+			break;
+		case FSKEY_SPACE:currString += " ";
+			break;
+		case FSKEY_TAB:currString += "\t";
+			break;
+		case FSKEY_DOT:
+			if (shiftIsOn)
+				currString += ">";
+			else
+				currString += ".";
+			break;
+		case FSKEY_ENTER: // allows soft line break
+			if (shiftIsOn)
+				currString += "\n";
+			break;
+		case FSKEY_COMMA:
+			if (shiftIsOn)
+				currString += "<";
+			else
+				currString += ",";
+			break;
+		case FSKEY_MINUS:
+			if (shiftIsOn)
+				currString += "_";
+			else
+				currString += "-";
+			break;
+		case FSKEY_PLUS:
+			if (shiftIsOn)
+				currString += "+";
+			else
+				currString += "=";
+			break;
+		case FSKEY_LBRACKET:
+			if (shiftIsOn)
+				currString += "{";
+			else
+				currString += "[";
+			break;
+		case FSKEY_RBRACKET:
+			if (shiftIsOn)
+				currString += "}";
+			else
+				currString += "]";
+			break;
+		case FSKEY_BACKSLASH:
+			if (shiftIsOn)
+				currString += "|";
+			else
+				currString += "\\"; // backslash
+			break;
+		case FSKEY_SEMICOLON:
+			if (shiftIsOn)
+				currString += ":";
+			else
+				currString += ";";
+			break;
+		case FSKEY_SINGLEQUOTE:
+			if (shiftIsOn)
+				currString += "\""; // double quote
+			else
+				currString += "'";
+			break;
+		case FSKEY_SLASH:
+			if (shiftIsOn)
+				currString += "?";
+			else
+				currString += "/";
+			break;
+		case FSKEY_TILDA:
+			if (shiftIsOn)
+				currString += "~";
+			else
+				currString += "`";
+			break;
+
+		}
+	}
+	return true; // may use this later ???
+}
