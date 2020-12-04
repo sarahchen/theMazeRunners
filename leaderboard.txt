@@ -1,0 +1,5 @@
+Bethany	250
+Richard	110
+Tyler	100
+Tanya	80
+Steve	60
