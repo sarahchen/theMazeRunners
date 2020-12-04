@@ -47,4 +47,5 @@ namespace DrawingUtilNG {
 	void drawCube(double x1, double y1, double z1, 
 		double x2, double y2, double z2, bool sixColors = false, GraphicFont* aFont = NULL);
 
+	bool buildStringFromFsInkey(int key, std::string& currString);
 };
