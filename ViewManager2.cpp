@@ -698,7 +698,7 @@ void ViewManager::gameOverScreen()
 
 		// score counter
 		impact.setColorRGB(255, 0, 0);
-		impact.drawText("GAME OVER", 3 * width / 9, 2*height / 5, 1);
+		impact.drawText("GAME OVER", 3 * width / 9, 2*height / 5, 1.25);
 		impact.drawText("Your score was: " + aScore + " points!", width / 6 + 100, 2 * height / 10 + 20, 0.8);
 
 		glColor3b(0, 100, 100);
