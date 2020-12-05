@@ -121,6 +121,11 @@ void Character::assignId(carType car, GLuint Id)
 	vehicleParams();
 }
 
+void Character::assignId(GLuint Id)
+{
+	textID = Id;
+}
+
 void Character::initialize()
 {
 	energyLevel = FULLENERGY;

@@ -6,8 +6,9 @@
 
 using namespace std;
 
-void Enemy::spawn(Cell spawnCell)
+void Enemy::spawn(Cell spawnCell, GLuint Id)
 {
+	textID = Id;
 	currentLocation = spawnCell;
 }
 
@@ -17,16 +18,35 @@ void Enemy::draw()
 	double centerX = currentLocation.getCenterX();
 	double centerY = currentLocation.getCenterY();
 	
-	//cout << "drawing enemy at x = " << centerX << " y = " << centerY << '\n';
-	//placeholder for now...draw a red square
-	glColor3ub(200, 0, 0);
+	//glColor3ub(200, 0, 0);
+	//glBegin(GL_QUADS);
+	//glVertex2d(centerX - size / 2, centerY + size / 2);
+	//glVertex2d(centerX + size / 2, centerY + size / 2);
+	//glVertex2d(centerX + size / 2, centerY - size / 2);
+	//glVertex2d(centerX - size / 2, centerY - size / 2);
+	//glEnd();
+	//glLoadIdentity();
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4d(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, textID);
+
 	glBegin(GL_QUADS);
+
+	glTexCoord2d(0.0, 0.0);
 	glVertex2d(centerX - size / 2, centerY + size / 2);
+	glTexCoord2d(0.0, 1.0);
 	glVertex2d(centerX + size / 2, centerY + size / 2);
+	glTexCoord2d(1.0, 1.0);
 	glVertex2d(centerX + size / 2, centerY - size / 2);
+	glTexCoord2d(1.0, 0.0);
 	glVertex2d(centerX - size / 2, centerY - size / 2);
 	glEnd();
-	glLoadIdentity();
+
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 
 }
 

@@ -61,6 +61,8 @@ public:
 	void vehicleParams();
 	void assignId(carType car, GLuint Id);
 
+	void assignId(GLuint Id);
+
 	// get and set for all member variables
 	string getLabel() { return thisCharacter.label; }
 	double getX() { return posCenter.x; }

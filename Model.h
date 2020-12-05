@@ -85,7 +85,7 @@ public:
 	void initializeCharacter(carType car, GLuint Id);
 
 	void initializeMaze();
-	void initializeEnemy();
+	void initializeEnemy(GLuint Id);
 
 	//updates all aspects of the gameplay
 	void update(ViewManager& theManager);

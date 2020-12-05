@@ -61,7 +61,7 @@ void ViewManager::manage()
 	//else ID = textIds[selectionIndex];	
 	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 	theModel.initializeMaze();
-	theModel.initializeEnemy();
+	theModel.initializeEnemy(textIds[3]);
 
 	while (!exitDesired) { // this makes the exit buttons be what quits the game
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -189,7 +189,7 @@ void ViewManager::manage()
 				theModel.initializeCharacter(selectedCar, ID); 
 				//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 				theModel.initializeMaze();
-				theModel.initializeEnemy();
+				theModel.initializeEnemy(textIds[3]);
 				//theModel.setHealthPercentage(5);
 				theModel.saveLeaders();
 			}
@@ -262,19 +262,23 @@ void ViewManager::prepareTheTextIds()
 	const char* regCarPurple = "regCarPurple.png";
 	const char* regCarGray = "regCarGray.png";
 
+	const char* enemyText = "noun_Death_3194193.png";
+
 
 	//add all the text ids to the texture vector
+	createTextId(F1Pic, F1, textIds);
+	createTextId(basicCarPic, basicCar, textIds);
+	createTextId(keyboardPic, keyboard, textIds);
+	createTextId(enemyPic, enemyText, textIds);
+
 	createTextId(carPicYellow, carYellow, textIdsCar);
 	createTextId(carPicBlue, carBlue, textIdsCar);
 	createTextId(carPicRose, carRose, textIdsCar);
 
-	createTextId(F1Pic, F1, textIds);
 	createTextId(truckPicOrange, truckOrange, textIdsTruck);
-	createTextId(basicCarPic, basicCar, textIds);
-	createTextId(keyboardPic, keyboard, textIds);
 	createTextId(truckPicBlue, truckBlue, textIdsTruck);
 	createTextId(truckPicGreen, truckGreen, textIdsTruck);
-
+	
 	createTextId(F1PicRed, F1Red, textIdsF1);
 	createTextId(F1PicBlue, F1Blue, textIdsF1);
 	createTextId(F1PicGreen, F1Green, textIdsF1);
@@ -524,7 +528,7 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 		theModel.initializeCharacter(selectedCar, ID); 
 		//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 		theModel.initializeMaze();
-		theModel.initializeEnemy();
+		theModel.initializeEnemy(textIds[3]);
 		theModel.setHealthPercentage(100);
 	}
 

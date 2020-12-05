@@ -52,6 +52,7 @@ private:
 	YsRawPngDecoder carPicYellow, carPicBlue, carPicRose;
 	YsRawPngDecoder F1PicRed, F1PicBlue, F1PicGreen;
 	YsRawPngDecoder regCarPicBlue, regCarPicPurple, regCarPicGray;
+	YsRawPngDecoder enemyPic;
 	YsRawPngDecoder keyboardPic;
 	double transpR, transpG, transpB;
 

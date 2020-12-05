@@ -98,9 +98,9 @@ void Model::initializeMaze()
 	theMaze.setPlayerCell(theCharacter);
 }
 
-void Model::initializeEnemy()
+void Model::initializeEnemy(GLuint Id)
 {
-	theEnemy.spawn(theMaze.getRandomCell());
+	theEnemy.spawn(theMaze.getRandomCell(), Id);
 }
 
 void Model::update(ViewManager& theManager)
