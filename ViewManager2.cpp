@@ -166,8 +166,10 @@ void ViewManager::manage()
 				theModel.update(*this);
 			}
 			else {
-				//int score = 0; // Once we have a score this will be theModel.getScore();
-				saveScreen();
+				if (theModel.isTopScore(theModel.getPlayerScore()))
+					saveScreen();
+				else
+					gameOverScreen();
 				isPlaying = false;
 				theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 				theModel.initializeMaze();
@@ -645,25 +647,29 @@ void ViewManager::saveScreen()
 	while (key != FSKEY_ENTER) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		string aScore = to_string(theModel.getPlayerScore());
+		// backdrop
+		glColor3ub(192, 192, 192);
+		DrawingUtilNG::drawRectangle(0, 0, width, height, true);
+
 		// Show score
-		impact.setColorHSV(180, .5, .5);
-		impact.drawText("Congratulations!", width / 4, height / 11 + 20, 0.9);
-		impact.drawText("Your score was: " + aScore + " points!", width / 8, height / 6 + 20, 0.8);
+		impact.setColorHSV(360, 1, 0.5);
+		impact.drawText("You made the top 5!", width / 3 - 25, height / 10 + 20, 0.8);
+		impact.drawText("Your score was: " + aScore + " points!", width / 6 + 100, 2*height / 10 + 20, 0.8);
 
 
 		// ask player to give a name
 		impact.setColorHSV(200, 1, 0.7);
-		impact.drawText("Enter your name to save your score.", width / 10, 3.25 * height / 10, 0.7);
-		impact.drawText("Press ENTER when done.", width / 6, 4 * height / 10, 0.5);
+		impact.drawText("Enter your name to save your score.", width / 6, 4.25 * height / 10, 0.7);
+		impact.drawText("Press ENTER when done.", width / 6, 5 * height / 10, 0.5);
 
-		DrawingUtilNG::drawRectangle(width / 6, 4 * height / 10 + 5, 2 * width / 3, height / 10, false);
+		DrawingUtilNG::drawRectangle(width / 6, 5 * height / 10 + 5, 2 * width / 3, height / 10, false);
 
 		// maybe show the existing leaderboard and the score being saved here
 
 		DrawingUtilNG::buildStringFromFsInkey(key, playerName);
 
 		impact.setColorHSV(185, 1, 0.5);
-		impact.drawText(playerName.c_str(), width / 6 + 5, height / 2, 0.4);
+		impact.drawText(playerName.c_str(), width / 6 + 5, 6* height / 10, 0.8);
 
 		FsSwapBuffers();
 		FsSleep(20);
@@ -671,6 +677,95 @@ void ViewManager::saveScreen()
 		key = FsInkey();
 	}
 	if (theModel.isTopScore(theModel.getPlayerScore())) theModel.addScore(playerName);  
+}
+
+void ViewManager::gameOverScreen()
+{
+	bool goToMenu = false;
+	bool exitNow = false;
+	int mouseEvent, lb, mb, rb, locX, locY;
+	string aScore = to_string(theModel.getPlayerScore());
+	FsPollDevice();
+	while (!goToMenu && !exitNow) {
+		mouseEvent = FsGetMouseEvent(lb, mb, rb, locX, locY);
+		bool onMenu = false;
+		bool onExit = false;
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		
+		// backdrop
+		glColor3ub(0, 0, 0);
+		DrawingUtilNG::drawRectangle(0, 0, width, height, true);
+
+		// score counter
+		impact.setColorRGB(255, 0, 0);
+		impact.drawText("GAME OVER", 3 * width / 9, 2*height / 5, 1);
+		impact.drawText("Your score was: " + aScore + " points!", width / 6 + 100, 2 * height / 10 + 20, 0.8);
+
+		glColor3b(0, 100, 100);
+		glBegin(GL_QUADS);
+		glVertex2i(0, 3 * height / 4);
+		glVertex2i(width / 2, 3 * height / 4);
+		glVertex2i(width / 2, height);
+		glVertex2i(0, height);
+		glEnd();
+		comicSans.setColorRGB(0, 0, 0);
+		comicSans.drawText("MENU", width / 8 + 50, 3.8 * height / 4, 0.8);
+
+		glColor3b(100, 100, 0);
+		glBegin(GL_QUADS);
+		glVertex2i(width/2, 3 * height / 4);
+		glVertex2i(width, 3 * height / 4);
+		glVertex2i(width, height);
+		glVertex2i(width/2, height);
+		glEnd();
+		comicSans.setColorRGB(0, 0, 0);
+		comicSans.drawText("RAGE QUIT", 4.5*width/8, 3.8 * height / 4, 0.8);
+
+		if (locY < height && locY > 0.75 * height) {
+			if (locX > 0 && locX < width / 2)
+				onMenu = true;
+			else
+				onMenu = false;
+		}
+		if (locY < height && locY > 0.75 * height) {
+			if (locX > width / 2 && locX < width)
+				onExit = true;
+			else
+				onExit = false;
+		}
+		glColor3ub(255, 0, 0);
+		glLineWidth(10);
+		if (onMenu) {
+			glBegin(GL_LINE_LOOP);
+			glVertex2i(0, 3 * height / 4);
+			glVertex2i(width / 2, 3 * height / 4);
+			glVertex2i(width / 2, height);
+			glVertex2i(0, height);
+			glEnd();
+		}
+		if (onExit) {
+			glBegin(GL_LINE_LOOP);
+			glVertex2i(width / 2, 3 * height / 4);
+			glVertex2i(width, 3 * height / 4);
+			glVertex2i(width, height);
+			glVertex2i(width / 2, height);
+			glEnd();
+		}
+
+		if (onMenu && lb)
+			goToMenu = true;
+		else if (onExit && lb)
+			exitNow = true;
+		cout << onExit << endl;
+		FsSwapBuffers();
+		FsSleep(20);
+		FsPollDevice();
+	}
+	glLineWidth(1);
+	if (goToMenu)
+		exitDesired = false;
+	else if (exitNow)
+		exitDesired = true;
 }
 
 void ViewManager::drawCars(int locX, int locY, int lb)
