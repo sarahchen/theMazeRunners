@@ -171,7 +171,23 @@ void ViewManager::manage()
 				else
 					gameOverScreen();
 				isPlaying = false;
-				theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+				GLuint ID;
+				switch (selectedCar) {
+				case truck:
+					ID = textIdsTruck[color];
+					break;
+				case lambo:
+					ID = textIdsCar[color];
+					break;
+				case F1:
+					ID = textIdsF1[color];
+					break;
+				case regCar:
+					ID = textIdsRegCar[color];
+					break;
+				}
+				theModel.initializeCharacter(selectedCar, ID); 
+				//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 				theModel.initializeMaze();
 				theModel.initializeEnemy();
 				theModel.setHealthPercentage(5);
@@ -490,7 +506,23 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	if (onMenu && lb) {
 		isPlaying = false;
 		// re-init everything when return to menu
-		theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+		GLuint ID;
+		switch (selectedCar) {
+		case truck:
+			ID = textIdsTruck[color];
+			break;
+		case lambo:
+			ID = textIdsCar[color];
+			break;
+		case F1:
+			ID = textIdsF1[color];
+			break;
+		case regCar:
+			ID = textIdsRegCar[color];
+			break;
+		}
+		theModel.initializeCharacter(selectedCar, ID); 
+		//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 		theModel.initializeMaze();
 		theModel.initializeEnemy();
 		theModel.setHealthPercentage(100);
