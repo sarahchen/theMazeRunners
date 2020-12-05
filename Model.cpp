@@ -35,7 +35,7 @@ void Model::updateHealth()
 		theCharacter.setHealth(theCharacter.getHealth() - 5);
 }
 
-void Model::load()
+void Model::loadLeaders()
 {
 	string inFileName = "leaderboard.txt";
 	ifstream inFile;
@@ -83,8 +83,8 @@ void Model::drawLeaders()
 void Model::clearLeaders()
 {
 	leaders.clear();
-	save();
-	load();
+	saveLeaders();
+	loadLeaders();
 }
 
 void Model::initializeCharacter(carType car, GLuint Id)
@@ -123,15 +123,16 @@ void Model::update(ViewManager& theManager)
 		theCharacter.setObstacleBack(true);
 	}
 
+	this->updateHealth();
 	theCharacter.updateKinematics(.1);
 	theCharacter.draw();
 	theMaze.drawMaze();
 
 	if (fabs(theCharacter.getVel()) > 0.3) {
 		theMaze.setPlayerCell(theCharacter);
-		theEnemy.findBestPath(theMaze);
-		//cout << "loc1\n";
 	}
+
+	theEnemy.findBestPath(theMaze);
 	theEnemy.move();
 	theEnemy.draw();
 }
@@ -167,7 +168,7 @@ bool Model::caught()
 	}
 }
 
-void Model::save()
+void Model::saveLeaders()
 {
 	string outFileName = "leaderboard.txt";
 	ifstream inFile;

@@ -60,8 +60,6 @@ private:
 	OldEnglishFont oldEnglish;
 	GaramondFont garamond;
 	ComicSansFont comicSans;
-	//ComicSansFont comicSans;
-	//GaramondFont garamond;
 
 	////sounds to be played
 	//YsSoundPlayer soundPlayer;

@@ -50,7 +50,7 @@ void ViewManager::manage()
 	//creates all the textIds for the graphics
 	prepareTheTextIds();
 
-	theModel.load();  // load the leaderboard file
+	theModel.loadLeaders();  // load the leaderboard file
 
 	int mouseEvent, lb, mb, rb;
 	int locX, locY;
@@ -190,15 +190,15 @@ void ViewManager::manage()
 				//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 				theModel.initializeMaze();
 				theModel.initializeEnemy();
-				theModel.setHealthPercentage(5);
-				theModel.save();
+				//theModel.setHealthPercentage(5);
+				theModel.saveLeaders();
 			}
 		}
 		FsSwapBuffers();
 		FsSleep(60);
 		FsPollDevice();
 	}
-	theModel.save();
+	theModel.saveLeaders();
 }
 
 void ViewManager::createTextId(YsRawPngDecoder& png, const char* fileName, vector<GLuint>& textIds)
@@ -585,8 +585,6 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	/*glColor3ub(0, 0, 0);
 	glRasterPos2d(width / 3 + 20, 3 * height / 5);
 	YsGlDrawFontBitmap20x32("THE GAME GOES HERE");*/
-
-	theModel.updateHealth();
 
 	// health percentage
 	//green

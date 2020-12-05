@@ -34,7 +34,7 @@ Character::Character()
 {
 	gameOver = false;
 	livesRemaining = STARTLIVES;
-	health = 5;
+	health = 100;
 	score = 100;
 
 	Force = 0;

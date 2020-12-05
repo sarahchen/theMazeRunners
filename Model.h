@@ -47,10 +47,10 @@ public:
 	void updateHealth();
 
 	//load the leaderboard
-	void load();
+	void loadLeaders();
 
 	//save the leaderboard
-	void save();
+	void saveLeaders();
 
 	//add score to leaderboard
 	void addScore(string name);
