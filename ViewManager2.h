@@ -115,6 +115,8 @@ public:
 	//screen for at end of game to save score
 	void saveScreen();
 
+	void gameOverScreen();
+
 	//draws the static elements that are present in both start and play screens (such as game title)
 	void drawStaticElements();
 
