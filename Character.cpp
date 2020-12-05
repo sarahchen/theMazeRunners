@@ -95,12 +95,12 @@ void Character::vehicleParams()
 		scale = .3;
 		break;
 	case truck:
-		mass = 1200;
+		mass = 1000;
 		maxVel = 40;
 		scale = 1.0;
 		break;
 	case regCar:
-		mass = 800;
+		mass = 700;
 		maxVel = 45;
 		scale = .5;
 		break;
