@@ -145,6 +145,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="fssimplewindow.cpp" />
     <ClCompile Include="GraphicFont.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Maze.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="fssimplewindow.h" />
     <ClInclude Include="GraphicFont.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ViewManager2.h" />

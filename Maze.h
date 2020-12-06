@@ -6,8 +6,6 @@
 #include "Cell.h"
 #include "Character.h"
 
-#define GRID_SIZE 160
-
 class Cell;
 class ViewManager;
 
@@ -16,6 +14,7 @@ private:
 
     // Number of rows and columns in the Grid
     int numRows, numCols;
+    int GRID_SIZE;
 
     std::unordered_map<int, Cell> Grid;
     std::stack<int> VisitedCells;

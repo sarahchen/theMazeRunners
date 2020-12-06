@@ -6,8 +6,9 @@
 Maze::Maze() 
 {
     // for now, 10x16 Grid of Hexagons
-    numRows = 10;
-    numCols = GRID_SIZE/numRows;
+    numRows = 9;
+    numCols = 20;
+    GRID_SIZE = numRows * numCols;
     
     // rowSize: size of each row
     // colSize: size of each column
@@ -29,8 +30,8 @@ Maze::Maze()
             gridY = gridY - 1;
         }
         
-        centerX = 150. + CELL_RADIUS + (CELL_RADIUS + CELL_RADIUS*sin(PI / 6))*(gridX-1.);
-        centerY = 125. + ((CELL_RADIUS/2)*sqrt(3)) + ((CELL_RADIUS / 2) * sqrt(3)) * (gridX % 2)
+        centerX = 170. + CELL_RADIUS + (CELL_RADIUS + CELL_RADIUS*sin(PI / 6))*(gridX-1.);
+        centerY = 140. + ((CELL_RADIUS/2)*sqrt(3)) + ((CELL_RADIUS / 2) * sqrt(3)) * (gridX % 2)
             + (CELL_RADIUS*sqrt(3))*(gridY-1.);
 
         Cell tmp(i, rowSize, colSize, centerX, centerY);
@@ -286,10 +287,10 @@ int Maze::checkOrientation(node one, node two, node three)
     int val = (two.y - one.y) * (three.x - two.x) -
         (two.x - one.x) * (three.y - two.y);
 
-    if (val > 10) {
+    if (val > 15) {
         return 1;
     }
-    else if (val < -10) {
+    else if (val < -15) {
         return 2;
     }
     else {
