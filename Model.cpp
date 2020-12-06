@@ -31,8 +31,15 @@ Model::Model()
 
 void Model::updateHealth()
 {
-	if (caught())
-		theCharacter.setHealth(theCharacter.getHealth() - 5);
+	if (caught()) {
+		auto currentTime = chrono::system_clock::now();
+		double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevDamageTime).count();
+		
+		if (elapsedTime > damageTimeThresh) {
+			theCharacter.setHealth(theCharacter.getHealth() - damageIncrement);
+			prevDamageTime = currentTime;
+		}
+	}
 }
 
 void Model::loadLeaders()
@@ -100,7 +107,15 @@ void Model::initializeMaze()
 
 void Model::initializeEnemy(GLuint Id)
 {
-	theEnemy.spawn(theMaze.getRandomCell(), Id);
+	for (int i = 0; i < numEnemies; i++) {
+		Enemy newEnemy;
+		theEnemies.push_back(newEnemy);
+		theEnemies[i].spawn(theMaze.getRandomCell(), Id);
+
+		//set enemy speeds randomly (between 1500-3000ms)
+		int randRate = rand() % 1500 + 1500;
+		theEnemies[i].setMoveTimeThresh(randRate);
+	}
 }
 
 void Model::update(ViewManager& theManager)
@@ -132,40 +147,46 @@ void Model::update(ViewManager& theManager)
 		theMaze.setPlayerCell(theCharacter);
 	}
 
-	theEnemy.findBestPath(theMaze);
-	theEnemy.move();
-	theEnemy.draw();
+	for (int i = 0; i < numEnemies; i++) {
+		theEnemies[i].findBestPath(theMaze);
+		theEnemies[i].move();
+		theEnemies[i].draw();
+	}
 }
 
 bool Model::caught()
 {
-	int enemyCell = theEnemy.getLocation().getLabel();
-	int playerCell = theMaze.getPlayerCell();
-	chrono::time_point<chrono::steady_clock> start;
+	for (int i = 0; i < numEnemies; i++) {
 
-	if (enemyCell == playerCell && playerCell != prevPlayerCell) {
-		prevPlayerCell = playerCell;
-		start = chrono::steady_clock::now();
-		return true;
-	}
-	else if (enemyCell == playerCell && playerCell == prevPlayerCell) {
-		auto current = chrono::duration_cast<chrono::seconds>(std::chrono::steady_clock::now() - start).count();
-		if (fmod(current, 3.0) == 0.0 && damaged == false) {
-			damaged = true;
+		int enemyCell = theEnemies[i].getLocation().getLabel();
+		int playerCell = theMaze.getPlayerCell();
+		//chrono::time_point<chrono::steady_clock> start;
+
+		if (enemyCell == playerCell /*&& playerCell != prevPlayerCell*/) {
+			//prevPlayerCell = playerCell;
+			//start = chrono::steady_clock::now();
 			return true;
 		}
-		else if (fmod(current, 3.0) == 0.0 && damaged == true) {
-			return false;
-		}
-		else {
-			damaged = false;
-			return false;
-		}
+		//else if (enemyCell == playerCell && playerCell == prevPlayerCell) {
+		//	auto current = chrono::duration_cast<chrono::seconds>(std::chrono::steady_clock::now() - start).count();
+		//	if (fmod(current, 3.0) == 0.0 && damaged == false) {
+		//		damaged = true;
+		//		return true;
+		//	}
+		//	else if (fmod(current, 3.0) == 0.0 && damaged == true) {
+		//		//return false;
+		//	}
+		//	else {
+		//		damaged = false;
+		//		//return false;
+		//	}
+		//}
+		//else {
+		//	damaged = false;
+		//	//return false;
+		//}
 	}
-	else {
-		damaged = false;
-		return false;
-	}
+	return false;
 }
 
 void Model::saveLeaders()

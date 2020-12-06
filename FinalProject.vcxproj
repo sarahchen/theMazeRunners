@@ -168,6 +168,9 @@
     <ClInclude Include="yspng.h" />
     <ClInclude Include="yssimplesound.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="noun_Skull_1174125.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

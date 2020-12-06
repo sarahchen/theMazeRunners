@@ -7,7 +7,7 @@ Maze::Maze()
 {
     // for now, 10x16 Grid of Hexagons
     numRows = 10;
-    numCols = GRID_SIZE / numRows;
+    numCols = GRID_SIZE/numRows;
     
     // rowSize: size of each row
     // colSize: size of each column
@@ -40,15 +40,19 @@ Maze::Maze()
 
 Cell Maze::getRandomCell()
 {
-    // Initialize random seed
-    srand(time(0));
-
     //find random number in the range of generated cells
+
     int randIdx = rand() % (numRows * numCols) + 1;
+    while (randIdx == prevRandomCell && randIdx != playerCell.getLabel()) {
+        randIdx = rand() % (numRows * numCols) + 1;
+    }
+    
+    prevRandomCell = randIdx;
     auto out = Grid.find(randIdx);
 
-    return out->second;
+    //cout << "random cell: " << out->second.getCenterX() << " , " << out->second.getCenterY() << '\n';
 
+    return out->second;
 }
 
 Cell Maze::getCell(int label)
@@ -157,7 +161,7 @@ void Maze::drawMaze()
     glColor3ub(255, 0, 0);
     int side = 1;
     int cellIdx = 0;
-    for (int i = 1; i < GRID_SIZE+1; i++) {
+    for (int i = 1; i < GRID_SIZE + 1; i++) {
         cellIdx = i * side;
         Grid[cellIdx].drawCell();
     }

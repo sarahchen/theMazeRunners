@@ -30,13 +30,20 @@ private:
 
 	Character theCharacter;
 	Maze theMaze;
-	Enemy theEnemy;
+	vector<Enemy> theEnemies;
+	int numEnemies = 3;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 	// stored for damage mechanic (bool caught())
+
 	int prevPlayerCell;
 	bool damaged;
 	//int healthPercentage;
+
+	//timestamp of the last time the character was damaged
+	chrono::system_clock::time_point prevDamageTime = chrono::system_clock::now();
+	double damageTimeThresh = 1000;		//how much time (in ms) the to wait until dealing damage again
+	double damageIncrement = 0.5;		//increment for dealing damage
 
 public:
 	//class constructor

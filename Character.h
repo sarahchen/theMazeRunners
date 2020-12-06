@@ -42,7 +42,8 @@ protected:
 
 	double headingAngle;
 	bool gameOver;
-	int health, score, livesRemaining;
+	double health;
+	int score, livesRemaining;
 	double energyLevel;
 
 	int Force, mass, maxVel;
@@ -83,7 +84,7 @@ public:
 	double getCy() { return cy; }
 	double getDx() { return dx; }
 	double getDy() { return dy; }
-	int getHealth() { return health; }
+	double getHealth() { return health; }
 
 	void setLabel(const std::string& newLabel) { thisCharacter.label = newLabel; }
 	void setX(double xCoord) { posCenter.x = xCoord; }

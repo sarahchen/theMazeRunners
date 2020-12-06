@@ -262,7 +262,7 @@ void ViewManager::prepareTheTextIds()
 	const char* regCarPurple = "regCarPurple.png";
 	const char* regCarGray = "regCarGray.png";
 
-	const char* enemyText = "noun_Death_3194193.png";
+	const char* enemyText = "noun_Skull_1174125.png";
 
 
 	//add all the text ids to the texture vector

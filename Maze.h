@@ -21,6 +21,8 @@ private:
     std::stack<int> VisitedCells;
 
     Cell playerCell; //cell where the player is currently located
+
+    int prevRandomCell = 0;
     
 public:
     Maze();

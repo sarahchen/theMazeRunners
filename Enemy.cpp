@@ -1,5 +1,6 @@
 #include <queue>
 #include <unordered_set>
+#include <chrono>
 #include "Enemy.h"
 
 #define LINEAR_INDEX(X, Y, XSIZE, YSIZE) ((Y-1)*XSIZE + (X-1))
@@ -36,13 +37,13 @@ void Enemy::draw()
 	glBegin(GL_QUADS);
 
 	glTexCoord2d(0.0, 0.0);
-	glVertex2d(centerX - size / 2, centerY + size / 2);
-	glTexCoord2d(0.0, 1.0);
-	glVertex2d(centerX + size / 2, centerY + size / 2);
-	glTexCoord2d(1.0, 1.0);
-	glVertex2d(centerX + size / 2, centerY - size / 2);
-	glTexCoord2d(1.0, 0.0);
 	glVertex2d(centerX - size / 2, centerY - size / 2);
+	glTexCoord2d(0.0, 1.0);
+	glVertex2d(centerX - size / 2, centerY + size / 2);
+	glTexCoord2d(1.0, 1.0);
+	glVertex2d(centerX + size / 2, centerY + size / 2);
+	glTexCoord2d(1.0, 0.0);
+	glVertex2d(centerX + size / 2, centerY - size / 2);
 	glEnd();
 
 	glDisable(GL_BLEND);
@@ -54,9 +55,15 @@ void Enemy::draw()
 void Enemy::move()
 {
 	if (!movementPlan.empty()) {
-		
-		currentLocation = movementPlan.back();
-		movementPlan.pop_back();
+
+		auto currentTime = chrono::system_clock::now();
+		double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevMoveTime).count();
+		//cout << "elapsed time: " << elapsedTime << '\n';
+		if (elapsedTime > moveTimeThresh) {
+			currentLocation = movementPlan.back();
+			movementPlan.pop_back();
+			prevMoveTime = currentTime;
+		}
 	}
 }
 
