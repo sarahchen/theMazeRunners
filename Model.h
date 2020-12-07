@@ -93,6 +93,9 @@ public:
 	//clears the stored leaders
 	void clearLeaders();
 
+	//runs initialization on the Model
+	void initialize();
+
 	//assigns initial parameters to the character
 	void initializeCharacter(carType car, GLuint Id);
 

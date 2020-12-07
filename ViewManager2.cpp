@@ -41,19 +41,15 @@ ViewManager::ViewManager()
 	newVehicleChosen = false;
 	transpR = 1.0, transpG = 1.0, transpB = 1.0;
 
-	srand(time(NULL));
+	//srand(time(NULL));
 }
 
 void ViewManager::initialize() {
 
-	//clear out enemies
-	//clear out items
-	//clear score
-
-	theModel.loadLeaders();  // load the leaderboard file
+	theModel.initialize();
 
 	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-	theModel.setHealthPercentage(3);
+	theModel.setHealthPercentage(100);
 
 	theModel.initializeMaze();
 	theModel.initializeEnemy(textIds[3]);
@@ -115,20 +111,7 @@ void ViewManager::manage()
 		else {
 			if (theModel.getHealthPercentage() > 0) {
 				playScreen(locX, locY, lb);
-				key = FsInkey();
-
-				//add item to the model!!
-				static int counter = 0;
-				if (counter == 100) {
-					cout << "New item!!";
-					itemType theItem;
-					GLuint itemId;
-					getRandomItem(theItem, itemId);
-					theModel.addItem(theItem, itemId);
-					counter = 0;
-				}
-				else counter++;
-		
+				key = FsInkey();		
 
 				if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {
 					/*		theCharacter.goForward();
@@ -848,7 +831,7 @@ void ViewManager::gameOverScreen()
 			goToMenu = true;
 		else if (onExit && lb)
 			exitNow = true;
-		cout << onExit << endl;
+		//cout << onExit << endl;
 		FsSwapBuffers();
 		FsSleep(20);
 		FsPollDevice();

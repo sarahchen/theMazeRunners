@@ -29,7 +29,7 @@ Model::Model()
 	damaged = false;
 	//healthPercentage = 100;
 	 /* initialize random seed: */
-	srand(time(NULL));
+	//srand(time(NULL));
 }
 
 void Model::updateHealth()
@@ -97,6 +97,16 @@ void Model::clearLeaders()
 	loadLeaders();
 }
 
+void Model::initialize() 
+{
+	theEnemies.clear();			//clear out enemies
+	theItems.clear();			//clear out items
+	theCharacter.setScore(0);	//clear score
+
+	loadLeaders();  // load the leaderboard file
+
+}
+
 void Model::initializeCharacter(carType car, GLuint Id)
 {
 	theCharacter.setCarInfo(width / 6 + (2.5 / 6 * width), (3 * height / 5), car, Id);
@@ -141,7 +151,7 @@ void Model::checkItemCollected()
 
 	for (int i = 0; i < theItems.size(); i++) {
 		if (theMaze.getPlayerCell() == theItems[i].getCell()) {
-			cout << "On an item!!";
+			//cout << "On an item!!";
 			temp[i] = true;
 		}
 	}
@@ -156,7 +166,7 @@ void Model::checkItemCollected()
 
 }
 
-void Model::update(ViewManager& theManager)
+void Model::update(ViewManager &theManager)
 {
 	 //testing of validcharmove
 	// if it is a validcharmove, there is no obstacle
@@ -193,6 +203,18 @@ void Model::update(ViewManager& theManager)
 
 	checkItemCollected();
 	for (int i = 0; i < theItems.size(); i++) theItems[i].draw();
+
+	//add item to the model!!
+	static int counter = 0;
+	if (counter == 100) {
+		//cout << "New item!!";
+		itemType theItem;
+		GLuint itemId;
+		theManager.getRandomItem(theItem, itemId);
+		addItem(theItem, itemId);
+		counter = 0;
+	}
+	else counter++;
 }
 
 bool Model::caught()
