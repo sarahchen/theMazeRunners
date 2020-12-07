@@ -73,6 +73,7 @@ public:
 	double getHei() { return thisCharacter.hei; }
 	double getWid() { return thisCharacter.wid; }
 	double getDep() { return thisCharacter.dep; }
+	double getAng() { return headingAngle; }
 	bool characterIsAlive() { return !gameOver; }
 	int getScore() { return score; }
 

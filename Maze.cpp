@@ -307,7 +307,12 @@ bool Maze::validCharMove(Character thePlayer, bool dir)
 {
     // sets cell that the player is in
     setPlayerCell(thePlayer);
+    // get player params
+    double vel = thePlayer.getVel();
+    double ang = thePlayer.getAng();
+
     node a, b;
+    node a_p, b_p;
     // gets 4 corners of car and check if each side is moveable
     if (dir == 0) {
         a = { thePlayer.getAx(), thePlayer.getAy() };
@@ -317,12 +322,22 @@ bool Maze::validCharMove(Character thePlayer, bool dir)
         a = { thePlayer.getBx(), thePlayer.getBy() };
         b = { thePlayer.getCx(), thePlayer.getCy() };
     }
+
+    a_p = { a.x + vel * cos(ang) * 0.1, a.y - vel * sin(ang) * 0.1 };
+    b_p = { b.x + vel * cos(ang) * 0.1, b.y - vel * sin(ang) * 0.1 };
+
     // iterate through every wall and check
     for (int i = 0; i < 6; i++) {
         // if wall exists, check if it intersects with player
         if (playerCell.walls[i]) {
             // if the wall intersects with top or bottom of player, return false
             if (checkWallContact(playerCell.getNode(i), playerCell.getNode((i+1)%6), a, b)) {
+                return false;
+            }
+            else if (checkWallContact(playerCell.getNode(i), playerCell.getNode((i + 1) % 6), a, a_p)) {
+                return false;
+            }
+            else if (checkWallContact(playerCell.getNode(i), playerCell.getNode((i + 1) % 6), b, b_p)) {
                 return false;
             }
         }
