@@ -44,6 +44,22 @@ ViewManager::ViewManager()
 	srand(time(NULL));
 }
 
+void ViewManager::initialize() {
+
+	//clear out enemies
+	//clear out items
+	//clear score
+
+	theModel.loadLeaders();  // load the leaderboard file
+
+	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+	theModel.setHealthPercentage(3);
+
+	theModel.initializeMaze();
+	theModel.initializeEnemy(textIds[3]);
+	
+}
+
 void ViewManager::manage()
 {
 
@@ -53,8 +69,7 @@ void ViewManager::manage()
 	//creates all the textIds for the graphics
 	prepareTheTextIds();
 
-	theModel.loadLeaders();  // load the leaderboard file
-
+	
 	int mouseEvent, lb, mb, rb;
 	int locX, locY;
 	GLuint ID;
@@ -62,9 +77,9 @@ void ViewManager::manage()
 	//	ID = textIdsTruck[0];
 	//}
 	//else ID = textIds[selectionIndex];	
-	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-	theModel.initializeMaze();
-	theModel.initializeEnemy(textIds[3]);
+
+	initialize();
+
 	itemType theItem;
 	GLuint itemId;
 	getRandomItem(theItem, itemId);
@@ -119,25 +134,25 @@ void ViewManager::manage()
 					/*		theCharacter.goForward();
 							theCharacter.adjustOrientation(.05);*/
 					theModel.moveCharForward();
-					theModel.rotateChar(.05);
+					theModel.rotateChar(.1);
 				}
 				else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_UP)) {
 					/*		theCharacter.goForward();
 							theCharacter.adjustOrientation(-.05);*/
 					theModel.moveCharForward();
-					theModel.rotateChar(-.05);
+					theModel.rotateChar(-.1);
 				}
 				else if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_DOWN)) {
 					/*theCharacter.goBackward();
 					theCharacter.adjustOrientation(-.05);*/
 					theModel.moveCharBackward();
-					theModel.rotateChar(.05);
+					theModel.rotateChar(.1);
 				}
 				else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_DOWN)) {
 					/*		theCharacter.goBackward();
 							theCharacter.adjustOrientation(.05);*/
 					theModel.moveCharBackward();
-					theModel.rotateChar(-.05);
+					theModel.rotateChar(-.1);
 				}
 
 				else if (FsGetKeyState(FSKEY_UP)) { theModel.moveCharForward(); } // { theCharacter.goForward(); }
@@ -206,11 +221,9 @@ void ViewManager::manage()
 					ID = textIdsRegCar[color];
 					break;
 				}
-				theModel.initializeCharacter(selectedCar, ID); 
-				//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-				theModel.initializeMaze();
-				theModel.initializeEnemy(textIds[3]);
-				//theModel.setHealthPercentage(5);
+
+				initialize();
+				
 				theModel.saveLeaders();
 			}
 		}

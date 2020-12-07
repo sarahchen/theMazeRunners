@@ -72,6 +72,8 @@ public:
 	//class constructor
 	ViewManager();
 
+	void initialize();
+
 	//basically runs the entire program
 	void manage();
 

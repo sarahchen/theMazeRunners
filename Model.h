@@ -36,6 +36,7 @@ private:
 	
 	vector<Item> theItems;
 
+	int currLevel = 1; //level the player is at...starts at 1, goes up with time (every x minutes?)
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 	// stored for damage mechanic (bool caught())
@@ -80,7 +81,7 @@ public:
 	static bool sortbysec(const pair<string, int>& a,
 		const pair<string, int>& b);
 
-	void readFile(std::ifstream& inFile);
+	void readLeaderFile(std::ifstream& inFile);
 	// reads the given file for accesing saved leaderboard
 
 	void writeFile(std::ofstream& outFile);

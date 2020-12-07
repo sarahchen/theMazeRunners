@@ -53,7 +53,7 @@ void Model::loadLeaders()
 	inFile.open(inFileName);
 
 	if (inFile.is_open()) {
-		readFile(inFile);
+		readLeaderFile(inFile);
 		inFile.close();
 	}
 	else
@@ -276,7 +276,7 @@ bool Model::sortbysec(const pair<string, int>& a, const pair<string, int>& b)
 	return a.second > b.second;
 }
 
-void Model::readFile(ifstream& inFile)
+void Model::readLeaderFile(ifstream& inFile)
 {
 	using namespace std;
 
@@ -287,6 +287,8 @@ void Model::readFile(ifstream& inFile)
 	int score;
 
 	vector<pair<string, int>> temp;
+
+	leaders.clear();
 
 	while (!inFile.eof()) //&& not '\n'
 	{

@@ -74,6 +74,7 @@ void Character::setCarInfo(int xpos, int ypos, carType car, GLuint Id)
 	initPos.y = ypos;
 	thisCar = car;
 	textID = Id;
+	headingAngle = M_PI_2;
 	vehicleParams();
 	initialize();
 }

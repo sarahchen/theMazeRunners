@@ -123,8 +123,6 @@ void Maze::getUnseenNeighbors(int currCell, std::vector<int>& unseenList)
 
 void Maze::generateMaze()
 {
-    // Initialize random seed
-    srand(time(0));
 
     // Initialize the Starting Cell
     Cell* startCell = &Grid[1];
