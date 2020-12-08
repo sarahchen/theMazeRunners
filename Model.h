@@ -21,6 +21,7 @@ Header file that creates the model
 #include "Maze.h"
 #include "Enemy.h"
 #include "Item.h"
+#include "soundHandler.h"
 
 class Model {
 
@@ -50,10 +51,13 @@ private:
 	double damageTimeThresh = 1000;		//how much time (in ms) the to wait until dealing damage again
 	double damageIncrement = 0.5;		//increment for dealing damage
 
+	int soundTrig;
+
 public:
 	//class constructor
 	Model();
 
+	int getSoundTrig() { return soundTrig; }
 	int getHealthPercentage() { return theCharacter.getHealth(); }
 	void setHealthPercentage(int health) { theCharacter.setHealth(health); }
 	void updateHealth();
