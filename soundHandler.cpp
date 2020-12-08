@@ -1,3 +1,9 @@
+/*
+Created by: Nate Winneg
+Interacts with yssimplesound
+to  make things easier.
+*/
+
 #include "soundHandler.h"
 
 Sound::Sound(string file)
