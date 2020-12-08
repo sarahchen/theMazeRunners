@@ -19,6 +19,7 @@ Header file that orchestrates the model and view
 #include "GraphicFont.h"
 #include "Character.h"
 #include "Model.h"
+#include "soundHandler.h"
 
 //enum carType { lambo, F1, truck, regCar };
 
@@ -44,6 +45,8 @@ private:
 	int color = 0;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
+
+	vector<Sound> theSounds;
 
 	//graphics to be displayed
 	vector<GLuint> textIds, textIdsTruck, textIdsCar, textIdsF1, textIdsRegCar, textIdsItems;
