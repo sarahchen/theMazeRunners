@@ -49,7 +49,7 @@ void ViewManager::initialize() {
 	theModel.initialize();
 
 	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-	theModel.setHealthPercentage(100);
+	theModel.setHealthPercentage(10);
 
 	theModel.initializeMaze();
 	theModel.initializeEnemy(textIds[3]);
@@ -280,7 +280,7 @@ void ViewManager::prepareTheTextIds()
 	const char* coffee = "coffee.png";
 	const char* star = "star.png"; 
 	const char* moneyBag = "moneyBag.png";
-	const char* enemyText = "noun_Skull_1174125.png";
+	const char* enemyText = "enemy.png";
 
 
 	//add all the text ids to the texture vector

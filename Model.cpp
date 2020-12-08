@@ -114,7 +114,8 @@ void Model::initializeCharacter(carType car, GLuint Id)
 
 void Model::initializeMaze()
 {
-	theMaze.generateMaze();
+	theMaze.initializeGrid();
+	theMaze.generateMaze(currLevel);
 	theMaze.setPlayerCell(theCharacter);
 }
 

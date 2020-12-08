@@ -6,33 +6,63 @@
 Maze::Maze() 
 {
     // for now, 10x16 Grid of Hexagons
-    numRows = 9;
-    numCols = 20;
+    numRows = 7;
+    numCols = 16;
     GRID_SIZE = numRows * numCols;
-    
-    // rowSize: size of each row
-    // colSize: size of each column
+
     int rowSize = numCols;
     int colSize = numRows;
-    
+
     int gridX, gridY;
     double centerX, centerY;
 
-    for(int i = 1; i < GRID_SIZE + 1; i++) {
+    for (int i = 1; i < GRID_SIZE + 1; i++) {
 
         // Determine centerX and centerY for current Cell
         // Using Convention stated in Cell.cpp
 
         gridX = i % numCols;
         gridY = (i / numCols) + 1;
-        if (gridX == 0) { 
+        if (gridX == 0) {
             gridX = numCols;
             gridY = gridY - 1;
         }
-        
-        centerX = 170. + CELL_RADIUS + (CELL_RADIUS + CELL_RADIUS*sin(PI / 6))*(gridX-1.);
-        centerY = 140. + ((CELL_RADIUS/2)*sqrt(3)) + ((CELL_RADIUS / 2) * sqrt(3)) * (gridX % 2)
-            + (CELL_RADIUS*sqrt(3))*(gridY-1.);
+
+        centerX = 170. + CELL_RADIUS + (CELL_RADIUS + CELL_RADIUS * sin(PI / 6)) * (gridX - 1.);
+        centerY = 140. + ((CELL_RADIUS / 2) * sqrt(3)) + ((CELL_RADIUS / 2) * sqrt(3)) * (gridX % 2)
+            + (CELL_RADIUS * sqrt(3)) * (gridY - 1.);
+
+        Cell tmp(i, rowSize, colSize, centerX, centerY);
+        Grid[i] = tmp;
+    }
+}
+
+void Maze::initializeGrid() 
+{
+    Grid.clear();
+    // rowSize: size of each row
+    // colSize: size of each column
+    int rowSize = numCols;
+    int colSize = numRows;
+
+    int gridX, gridY;
+    double centerX, centerY;
+
+    for (int i = 1; i < GRID_SIZE + 1; i++) {
+
+        // Determine centerX and centerY for current Cell
+        // Using Convention stated in Cell.cpp
+
+        gridX = i % numCols;
+        gridY = (i / numCols) + 1;
+        if (gridX == 0) {
+            gridX = numCols;
+            gridY = gridY - 1;
+        }
+
+        centerX = 170. + CELL_RADIUS + (CELL_RADIUS + CELL_RADIUS * sin(PI / 6)) * (gridX - 1.);
+        centerY = 140. + ((CELL_RADIUS / 2) * sqrt(3)) + ((CELL_RADIUS / 2) * sqrt(3)) * (gridX % 2)
+            + (CELL_RADIUS * sqrt(3)) * (gridY - 1.);
 
         Cell tmp(i, rowSize, colSize, centerX, centerY);
         Grid[i] = tmp;
@@ -121,9 +151,8 @@ void Maze::getUnseenNeighbors(int currCell, std::vector<int>& unseenList)
     }
 }
 
-void Maze::generateMaze()
+void Maze::generateMaze(int currLevel)
 {
-
     // Initialize the Starting Cell
     Cell* startCell = &Grid[1];
     // Mark starting cell as visited and push it to the stack
@@ -150,6 +179,31 @@ void Maze::generateMaze()
         // until we find a cell with unseen neighbors
         else {
             VisitedCells.pop();
+        }
+    }
+
+    // randomly tear down some walls
+    // the lower the level, the more walls it tears down
+    for (int i = 0; i < GRID_SIZE - currLevel * 10; i++) {
+        // randomly choose a cell
+        int randlbl = rand() % GRID_SIZE + 1;
+        if (randlbl == 0) { randlbl = 1; }
+
+        // randomly choose how many walls to tear down
+        int numWallsDown = rand() % 6;
+        for (int i = 0; i < numWallsDown; i++) {
+            // choose wall index to tear down
+            int idx = rand() % 6;
+
+            int nextlbl = Grid[randlbl].neighbors[idx];
+            if (nextlbl != 0) {
+                Grid[randlbl].setWall(idx, false);
+                int nextidx = (idx - 3) % 6;
+                if (nextidx < 0) {
+                    nextidx = 6 + nextidx;
+                }
+                Grid[nextlbl].setWall(nextidx, false);
+            }
         }
     }
 }

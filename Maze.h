@@ -25,6 +25,7 @@ private:
     
 public:
     Maze();
+    void initializeGrid();
 
     //returns the unordered map of cells that compose the maze grid
     std::unordered_map<int, Cell> getGrid() { return Grid; }
@@ -47,7 +48,7 @@ public:
     bool searchNext(int currCell, int& nextCell);
 
     // depth-first search algorithm
-    void generateMaze();
+    void generateMaze(int currLevel);
 
     // draws the maze
     void drawMaze();
