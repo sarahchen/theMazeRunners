@@ -34,6 +34,7 @@ private:
 	int cell;
 
 	Cell itemCell;
+	
 
 public:
 	//class constructor
@@ -49,5 +50,7 @@ public:
 	void setPos(int newX, int newY) { pos.x = newX, pos.y = newY; }
 
 	void draw();
+
+	int getItemType() { return thisItem; }
 
 };
