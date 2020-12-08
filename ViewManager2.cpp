@@ -1,4 +1,3 @@
-
 /*
 Maze Mania
 ViewManager2.cpp
@@ -21,8 +20,10 @@ file that orchestrates the model and view
 #include <vector> // for vectors 
 //#include <bits/stdc++.h> 
 #include <filesystem>
+#include <time.h>       /* time */
 #include "ViewManager2.h"
 #include "ysglfontdata.h"
+#include "soundHandler.h"
 
 using namespace std;
 
@@ -39,6 +40,20 @@ ViewManager::ViewManager()
 
 	newVehicleChosen = false;
 	transpR = 1.0, transpG = 1.0, transpB = 1.0;
+
+	//srand(time(NULL));
+}
+
+void ViewManager::initialize() {
+
+	theModel.initialize();
+
+	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+	theModel.setHealthPercentage(10);
+
+	theModel.initializeMaze();
+	theModel.initializeEnemy(textIds[3]);
+
 }
 
 void ViewManager::manage()
@@ -50,7 +65,6 @@ void ViewManager::manage()
 	//creates all the textIds for the graphics
 	prepareTheTextIds();
 
-	theModel.load();  // load the leaderboard file
 
 	int mouseEvent, lb, mb, rb;
 	int locX, locY;
@@ -59,16 +73,28 @@ void ViewManager::manage()
 	//	ID = textIdsTruck[0];
 	//}
 	//else ID = textIds[selectionIndex];	
-	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-	theModel.initializeMaze();
-	theModel.initializeEnemy();
+
+	initialize();
+
+	Sound coffee("coffee.wav");
+	Sound cha_ching("cash_register.wav");
+	Sound starSound("star.wav");
+	Sound background("backgroundMusic.wav");
+	background.setVolume(0.3);
+
+	itemType theItem;
+	GLuint itemId;
+	getRandomItem(theItem, itemId);
+	theModel.addItem(theItem, itemId);
 
 	while (!exitDesired) { // this makes the exit buttons be what quits the game
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		mouseEvent = FsGetMouseEvent(lb, mb, rb, locX, locY);
-
+		
 		if (!isPlaying) {
 			startScreen(locX, locY, lb, mouseEvent);
+			if (background.isPlaying())
+				background.stop();
 			if (newVehicleChosen) {
 				switch (selectedCar) {
 				case truck:
@@ -94,43 +120,54 @@ void ViewManager::manage()
 			if (theModel.getHealthPercentage() > 0) {
 				playScreen(locX, locY, lb);
 				key = FsInkey();
+				// TESTING
+				if (!background.isPlaying())
+					background.playOnce();
+				switch (theModel.getSoundTrig()) {
+				case 0:
+					coffee.playOnce();
+				case 1:
+					starSound.playOnce();
+				case 2:
+					cha_ching.playOnce();
+				}
 
 				if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {
 					/*		theCharacter.goForward();
 							theCharacter.adjustOrientation(.05);*/
 					theModel.moveCharForward();
-					theModel.rotateChar(.05);
+					theModel.rotateChar(.2);
 				}
 				else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_UP)) {
 					/*		theCharacter.goForward();
 							theCharacter.adjustOrientation(-.05);*/
 					theModel.moveCharForward();
-					theModel.rotateChar(-.05);
+					theModel.rotateChar(-.2);
 				}
 				else if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_DOWN)) {
 					/*theCharacter.goBackward();
 					theCharacter.adjustOrientation(-.05);*/
 					theModel.moveCharBackward();
-					theModel.rotateChar(.05);
+					theModel.rotateChar(.2);
 				}
 				else if (FsGetKeyState(FSKEY_RIGHT) && FsGetKeyState(FSKEY_DOWN)) {
 					/*		theCharacter.goBackward();
 							theCharacter.adjustOrientation(.05);*/
 					theModel.moveCharBackward();
-					theModel.rotateChar(-.05);
+					theModel.rotateChar(-.2);
 				}
 
 				else if (FsGetKeyState(FSKEY_UP)) { theModel.moveCharForward(); } // { theCharacter.goForward(); }
 				else if (FsGetKeyState(FSKEY_RIGHT)) {
 					/*		theCharacter.adjustOrientation(-.1);
 							theCharacter.setForce(0);*/
-					theModel.rotateChar(-.1);
+					theModel.rotateChar(-.2);
 					theModel.zeroCharForce();
 				}
 				else if (FsGetKeyState(FSKEY_LEFT)) {
 					/*	theCharacter.adjustOrientation(.1);
 						theCharacter.setForce(0);*/
-					theModel.rotateChar(.1);
+					theModel.rotateChar(.2);
 					theModel.zeroCharForce();
 				}
 				else if (FsGetKeyState(FSKEY_DOWN)) { theModel.moveCharBackward(); } // { theCharacter.goBackward(); }
@@ -166,9 +203,14 @@ void ViewManager::manage()
 				theModel.update(*this);
 			}
 			else {
-				//int score = 0; // Once we have a score this will be theModel.getScore();
-				saveScreen();
+				if (background.isPlaying())
+					background.stop();
+				if (theModel.isTopScore(theModel.getPlayerScore()))
+					saveScreen();
+				else
+					gameOverScreen();
 				isPlaying = false;
+				GLuint ID;
 				switch (selectedCar) {
 				case truck:
 					ID = textIdsTruck[color];
@@ -183,19 +225,17 @@ void ViewManager::manage()
 					ID = textIdsRegCar[color];
 					break;
 				}
-				//theModel.updateCharId(selectedCar, ID);
-				theModel.initializeCharacter(selectedCar, ID); //textIds[selectionIndex]);
-				theModel.initializeMaze();
-				theModel.initializeEnemy();
-				theModel.setHealthPercentage(5);
-				theModel.save();
+
+				initialize();
+
+				theModel.saveLeaders();
 			}
 		}
 		FsSwapBuffers();
 		FsSleep(60);
 		FsPollDevice();
 	}
-	theModel.save();
+	theModel.saveLeaders();
 }
 
 void ViewManager::createTextId(YsRawPngDecoder& png, const char* fileName, vector<GLuint>& textIds)
@@ -258,17 +298,23 @@ void ViewManager::prepareTheTextIds()
 	const char* regCarBlue = "regCarBlue.png";
 	const char* regCarPurple = "regCarPurple.png";
 	const char* regCarGray = "regCarGray.png";
+	const char* coffee = "coffee.png";
+	const char* star = "star.png";
+	const char* moneyBag = "moneyBag.png";
+	const char* enemyText = "enemy.png";
 
 
 	//add all the text ids to the texture vector
+	createTextId(F1Pic, F1, textIds);
+	createTextId(basicCarPic, basicCar, textIds);
+	createTextId(keyboardPic, keyboard, textIds);
+	createTextId(enemyPic, enemyText, textIds);
+
 	createTextId(carPicYellow, carYellow, textIdsCar);
 	createTextId(carPicBlue, carBlue, textIdsCar);
 	createTextId(carPicRose, carRose, textIdsCar);
 
-	createTextId(F1Pic, F1, textIds);
 	createTextId(truckPicOrange, truckOrange, textIdsTruck);
-	createTextId(basicCarPic, basicCar, textIds);
-	createTextId(keyboardPic, keyboard, textIds);
 	createTextId(truckPicBlue, truckBlue, textIdsTruck);
 	createTextId(truckPicGreen, truckGreen, textIdsTruck);
 
@@ -279,6 +325,41 @@ void ViewManager::prepareTheTextIds()
 	createTextId(regCarPicPurple, regCarPurple, textIdsRegCar);
 	createTextId(regCarPicBlue, regCarBlue, textIdsRegCar);
 	createTextId(regCarPicGray, regCarGray, textIdsRegCar);
+
+	createTextId(coffeePic, coffee, textIdsItems);
+	createTextId(starPic, star, textIdsItems);
+	createTextId(moneyBagPic, moneyBag, textIdsItems);
+}
+
+//void ViewManager::loadSounds()
+//{
+//	Sound coffee("coffee.wav");
+//	theSounds.push_back(coffee);
+//	Sound star("star.wav");
+//	theSounds.push_back(star);
+//	Sound cha_ching("cash_register.wav");
+//	theSounds.push_back(cha_ching);
+//	Sound background("backgroundMusic.wav");
+//	theSounds.push_back(background);
+//}
+
+void ViewManager::getRandomItem(itemType& item, GLuint& Id)
+{
+	int randItem = rand() % textIdsItems.size();
+	switch (randItem) {
+	case 0:
+		item = coffee;
+		Id = textIdsItems[0];
+		break;
+	case 1:
+		item = star;
+		Id = textIdsItems[1];
+		break;
+	case 2:
+		item = moneyBag;
+		Id = textIdsItems[2];
+		break;
+	}
 
 }
 
@@ -518,9 +599,10 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 			ID = textIdsRegCar[color];
 			break;
 		}
-		theModel.initializeCharacter(selectedCar, ID); 
+		theModel.initializeCharacter(selectedCar, ID);
+		//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
 		theModel.initializeMaze();
-		theModel.initializeEnemy();
+		theModel.initializeEnemy(textIds[3]);
 		theModel.setHealthPercentage(100);
 	}
 
@@ -582,8 +664,6 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	glRasterPos2d(width / 3 + 20, 3 * height / 5);
 	YsGlDrawFontBitmap20x32("THE GAME GOES HERE");*/
 
-	theModel.updateHealth();
-
 	// health percentage
 	//green
 	if (theModel.getHealthPercentage() > 66)
@@ -638,9 +718,9 @@ void ViewManager::drawStaticElements()
 	glTexCoord2d(1.0, 0.0);
 	glVertex2i(0, height / 3.8);
 	glTexCoord2d(0.0, 0.0);
-	glVertex2i(width/8, height / 3.8);
+	glVertex2i(width / 8, height / 3.8);
 	glTexCoord2d(0.0, 1.0);
-	glVertex2i(width/8, height / 2.35);
+	glVertex2i(width / 8, height / 2.35);
 	glTexCoord2d(1.0, 1.0);
 	glVertex2i(0, height / 2.35);
 	glEnd();
@@ -675,32 +755,125 @@ void ViewManager::saveScreen()
 	while (key != FSKEY_ENTER) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		string aScore = to_string(theModel.getPlayerScore());
+		// backdrop
+		glColor3ub(192, 192, 192);
+		DrawingUtilNG::drawRectangle(0, 0, width, height, true);
+
 		// Show score
-		impact.setColorHSV(180, .5, .5);
-		impact.drawText("Congratulations!", width / 4, height / 11 + 20, 0.9);
-		impact.drawText("Your score was: " + aScore + " points!", width / 8, height / 6 + 20, 0.8);
+		impact.setColorHSV(360, 1, 0.5);
+		impact.drawText("You made the top 5!", width / 3 - 25, height / 10 + 20, 0.8);
+		impact.drawText("Your score was: " + aScore + " points!", width / 6 + 100, 2 * height / 10 + 20, 0.8);
 
 
 		// ask player to give a name
 		impact.setColorHSV(200, 1, 0.7);
-		impact.drawText("Enter your name to save your score.", width / 10, 3.25 * height / 10, 0.7);
-		impact.drawText("Press ENTER when done.", width / 6, 4 * height / 10, 0.5);
+		impact.drawText("Enter your name to save your score.", width / 6, 4.25 * height / 10, 0.7);
+		impact.drawText("Press ENTER when done.", width / 6, 5 * height / 10, 0.5);
 
-		DrawingUtilNG::drawRectangle(width / 6, 4 * height / 10 + 5, 2 * width / 3, height / 10, false);
+		DrawingUtilNG::drawRectangle(width / 6, 5 * height / 10 + 5, 2 * width / 3, height / 10, false);
 
 		// maybe show the existing leaderboard and the score being saved here
 
 		DrawingUtilNG::buildStringFromFsInkey(key, playerName);
 
 		impact.setColorHSV(185, 1, 0.5);
-		impact.drawText(playerName.c_str(), width / 6 + 5, height / 2, 0.4);
+		impact.drawText(playerName.c_str(), width / 6 + 5, 6 * height / 10, 0.8);
 
 		FsSwapBuffers();
 		FsSleep(20);
 		FsPollDevice();
 		key = FsInkey();
 	}
-	if (theModel.isTopScore(theModel.getPlayerScore())) theModel.addScore(playerName);  
+	if (theModel.isTopScore(theModel.getPlayerScore())) theModel.addScore(playerName);
+}
+
+void ViewManager::gameOverScreen()
+{
+	bool goToMenu = false;
+	bool exitNow = false;
+	int mouseEvent, lb, mb, rb, locX, locY;
+	string aScore = to_string(theModel.getPlayerScore());
+	FsPollDevice();
+	while (!goToMenu && !exitNow) {
+		mouseEvent = FsGetMouseEvent(lb, mb, rb, locX, locY);
+		bool onMenu = false;
+		bool onExit = false;
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+		// backdrop
+		glColor3ub(0, 0, 0);
+		DrawingUtilNG::drawRectangle(0, 0, width, height, true);
+
+		// score counter
+		impact.setColorRGB(255, 0, 0);
+		impact.drawText("GAME OVER", 3 * width / 9, 2 * height / 5, 1.25);
+		impact.drawText("Your score was: " + aScore + " points!", width / 6 + 100, 2 * height / 10 + 20, 0.8);
+
+		glColor3b(0, 100, 100);
+		glBegin(GL_QUADS);
+		glVertex2i(0, 3 * height / 4);
+		glVertex2i(width / 2, 3 * height / 4);
+		glVertex2i(width / 2, height);
+		glVertex2i(0, height);
+		glEnd();
+		comicSans.setColorRGB(0, 0, 0);
+		comicSans.drawText("MENU", width / 8 + 50, 3.8 * height / 4, 0.8);
+
+		glColor3b(100, 100, 0);
+		glBegin(GL_QUADS);
+		glVertex2i(width / 2, 3 * height / 4);
+		glVertex2i(width, 3 * height / 4);
+		glVertex2i(width, height);
+		glVertex2i(width / 2, height);
+		glEnd();
+		comicSans.setColorRGB(0, 0, 0);
+		comicSans.drawText("RAGE QUIT", 4.5 * width / 8, 3.8 * height / 4, 0.8);
+
+		if (locY < height && locY > 0.75 * height) {
+			if (locX > 0 && locX < width / 2)
+				onMenu = true;
+			else
+				onMenu = false;
+		}
+		if (locY < height && locY > 0.75 * height) {
+			if (locX > width / 2 && locX < width)
+				onExit = true;
+			else
+				onExit = false;
+		}
+		glColor3ub(255, 0, 0);
+		glLineWidth(10);
+		if (onMenu) {
+			glBegin(GL_LINE_LOOP);
+			glVertex2i(0, 3 * height / 4);
+			glVertex2i(width / 2, 3 * height / 4);
+			glVertex2i(width / 2, height);
+			glVertex2i(0, height);
+			glEnd();
+		}
+		if (onExit) {
+			glBegin(GL_LINE_LOOP);
+			glVertex2i(width / 2, 3 * height / 4);
+			glVertex2i(width, 3 * height / 4);
+			glVertex2i(width, height);
+			glVertex2i(width / 2, height);
+			glEnd();
+		}
+
+		if (onMenu && lb)
+			goToMenu = true;
+		else if (onExit && lb)
+			exitNow = true;
+		//cout << onExit << endl;
+		FsSwapBuffers();
+		FsSleep(20);
+		FsPollDevice();
+	}
+	glLineWidth(1);
+	if (goToMenu)
+		exitDesired = false;
+	else if (exitNow)
+		exitDesired = true;
 }
 
 void ViewManager::drawCars(int locX, int locY, int lb)
@@ -749,13 +922,13 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	glBindTexture(GL_TEXTURE_2D, textIdsTruck[color]);
 	glBegin(GL_QUADS);
 	glTexCoord2d(1.0, 0.0);
-	glVertex2d(5 * width / 9, 2.05 * height / 5);
+	glVertex2d(5 * width / 9, 2.15 * height / 5);
 	glTexCoord2d(0.0, 0.0);
-	glVertex2d(3 * width / 4, 2.05 * height / 5);
+	glVertex2d(3 * width / 4, 2.15 * height / 5);
 	glTexCoord2d(0.0, 1.0);
-	glVertex2d(3 * width / 4, 2.8 * height / 5);
+	glVertex2d(3 * width / 4, 2.7 * height / 5);
 	glTexCoord2d(1.0, 1.0);
-	glVertex2d(5 * width / 9, 2.8 * height / 5);
+	glVertex2d(5 * width / 9, 2.7 * height / 5);
 	glEnd();
 
 	if (selectedCar == regCar) { glColor4d(transpR, transpG, transpB, selected); }
@@ -764,13 +937,13 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	glBindTexture(GL_TEXTURE_2D, textIdsRegCar[color]);
 	glBegin(GL_QUADS);
 	glTexCoord2d(0.0, 0.0);
-	glVertex2d(4.05 * width / 5, 1.95 * height / 5);
+	glVertex2d(4.05 * width / 5, 2.15 * height / 5);
 	glTexCoord2d(0.0, 1.0);
-	glVertex2d(11. * width / 12, 1.95 * height / 5);
+	glVertex2d(11. * width / 12, 2.15 * height / 5);
 	glTexCoord2d(1.0, 1.0);
-	glVertex2d(11. * width / 12, 2.73 * height / 5);
+	glVertex2d(11. * width / 12, 2.55 * height / 5);
 	glTexCoord2d(1.0, 0.0);
-	glVertex2d(4.05 * width / 5, 2.73 * height / 5);
+	glVertex2d(4.05 * width / 5, 2.55 * height / 5);
 	glEnd();
 
 	glDisable(GL_BLEND);
@@ -827,26 +1000,26 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 	int car_bottomY = 3.25 * height / 5 + 10;
 
 
-	if (locX > lambo_leftX&& locX < lambo_rightX) {
-		if (locY > lambo_topY&& locY < lambo_bottomY) {
+	if (locX > lambo_leftX && locX < lambo_rightX) {
+		if (locY > lambo_topY && locY < lambo_bottomY) {
 			drawHoverOutline(lambo_leftX, lambo_topY, lambo_rightX, lambo_bottomY);
 			onlambo = true;
 		}
 	}
-	if (locX > F1_leftX&& locX < F1_rightX) {
-		if (locY > F1_topY&& locY < F1_bottomY) {
+	if (locX > F1_leftX && locX < F1_rightX) {
+		if (locY > F1_topY && locY < F1_bottomY) {
 			drawHoverOutline(F1_leftX, F1_topY, F1_rightX, F1_bottomY);
 			onF1 = true;
 		}
 	}
-	if (locX > truck_leftX&& locX < truck_rightX) {
-		if (locY > truck_topY&& locY < truck_bottomY) {
+	if (locX > truck_leftX && locX < truck_rightX) {
+		if (locY > truck_topY && locY < truck_bottomY) {
 			drawHoverOutline(truck_leftX, truck_topY, truck_rightX, truck_bottomY);
 			onTruck = true;
 		}
 	}
-	if (locX > car_leftX&& locX < car_rightX) {
-		if (locY > car_topY&& locY < car_bottomY) {
+	if (locX > car_leftX && locX < car_rightX) {
+		if (locY > car_topY && locY < car_bottomY) {
 			drawHoverOutline(car_leftX, car_topY, car_rightX, car_bottomY);
 			onCar = true;
 		}
