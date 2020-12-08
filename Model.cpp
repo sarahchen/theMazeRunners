@@ -27,6 +27,7 @@ Model::Model()
 	//window size and simulation time
 	FsGetWindowSize(width, height);
 	damaged = false;
+	soundTrig = 5;
 	//healthPercentage = 100;
 	 /* initialize random seed: */
 	//srand(time(NULL));
@@ -59,6 +60,7 @@ void Model::loadLeaders()
 	else
 		cout << "Was not able to open " << inFileName << " for input. " << endl;
 }
+
 
 void Model::drawLeaders()
 {
@@ -160,11 +162,12 @@ void Model::checkItemCollected()
 	for (int i = 0; i < theItems.size(); i++) {
 		if (temp[i] == true) {
 			theCharacter.addScore(theItems[i].getPointVal());
+			soundTrig = theItems[i].getItemType();
 			theItems.erase(theItems.begin() + i);
 		}
-
+		else
+			soundTrig = 5;
 	}
-
 }
 
 void Model::update(ViewManager &theManager)
