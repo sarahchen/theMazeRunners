@@ -1,3 +1,9 @@
+/*
+Created by: Nate Winneg
+Interacts with yssimplesound
+to  make things easier.
+*/
+
 #pragma once
 #include <stdlib.h>
 #include <string>
