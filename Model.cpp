@@ -114,6 +114,7 @@ void Model::initializeMaze()
 
 void Model::initializeEnemy(GLuint Id)
 {
+	theEnemies.clear();
 	for (int i = 0; i < numEnemies; i++) {
 		Enemy newEnemy;
 		theEnemies.push_back(newEnemy);
@@ -240,7 +241,7 @@ void Model::checkLevel()
 
 	double levelCheck = floor((double)score / (double)levelIncrementThresh) + 1;
 	if (levelCheck > currLevel) incrementLevel();
-
+	
 	//cout << "current level = " << currLevel << '\n';
 	//cout << " level check = " << levelCheck << '\n';
 }
@@ -253,6 +254,7 @@ void Model::incrementLevel()
 	initializeMaze();
 	theCharacter.reset();
 	//add overlay for level up
+
 }
 
 void Model::update(ViewManager &theManager)
@@ -286,7 +288,6 @@ void Model::update(ViewManager &theManager)
 		theEnemies[i].move();
 		theEnemies[i].draw();
 	}
-
 	checkItemCollected();
 	checkItemEffects();
 	for (int i = 0; i < theItems.size(); i++) theItems[i].draw();
