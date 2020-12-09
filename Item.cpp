@@ -6,14 +6,14 @@
 #include "Cell.h"	//for cell radius
 #include "Maze.h"
 
-Item::Item(int cellNum, itemType item, GLuint Id, Maze theMaze)
+Item::Item(Cell inputCell, itemType item, GLuint Id, Maze theMaze)
 {
 	thisItem = item;
 	textID = Id;
-	itemCell = theMaze.getCell(cellNum);
+	itemCell = inputCell;
 	pos.x = itemCell.getCenterX();
 	pos.y = itemCell.getCenterY();
-	cell = cellNum;
+	cell = inputCell.getLabel();
 	collected = false;
 	wid = CELL_RADIUS;
 	hei = CELL_RADIUS;
@@ -30,7 +30,7 @@ void Item::assignPointVal()
 		pointVal = 80;
 		break;
 	case moneyBag:
-		pointVal = 120;
+		pointVal = 200;
 		break;
 	}
 }

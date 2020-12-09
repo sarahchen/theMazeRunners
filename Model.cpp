@@ -126,12 +126,13 @@ void Model::initializeEnemy(GLuint Id)
 
 void Model::addItem(itemType item, GLuint Id)
 {
-	int numCells = theMaze.getNumRows() * theMaze.getNumCols();
-	int cell = rand() % numCells;
+	//int numCells = theMaze.getNumRows() * theMaze.getNumCols();
+	//int cell = rand() % numCells;
 
-	int xPos = width / 8 + rand() % int(width * 7/8);
-	int yPos = height / 5.5 + rand() % int(height * 4.5/5.5);
-	Item newItem(cell, item, Id, theMaze);
+	//int xPos = width / 8 + rand() % int(width * 7/8);
+	//int yPos = height / 5.5 + rand() % int(height * 4.5/5.5);
+
+	Item newItem(theMaze.getRandomCell(), item, Id, theMaze);
 	theItems.push_back(newItem);
 }
 
@@ -210,14 +211,14 @@ void Model::update(ViewManager &theManager)
 	 //testing of validcharmove
 	// if it is a validcharmove, there is no obstacle
 
-	// test front
+	// check front
 	if (theMaze.validCharMove(theCharacter, 0)) {
 		theCharacter.setObstacleFront(false);
 	}
 	else {
 		theCharacter.setObstacleFront(true);
 	}
-	// test back
+	// check back
 	if (theMaze.validCharMove(theCharacter, 1)) {
 		theCharacter.setObstacleBack(false);
 	}

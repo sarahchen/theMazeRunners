@@ -38,7 +38,7 @@ private:
 
 public:
 	//class constructor
-	Item(int cellNum, itemType item, GLuint Id, Maze theMaze);
+	Item(Cell inputCell, itemType item, GLuint Id, Maze theMaze);
 
 	void assignPointVal();
 
