@@ -91,6 +91,8 @@ public:
 
 	//gets the player's score
 	int getPlayerScore();
+	int getCurrLevel() { return currLevel; }
+	void setCurrLevel(int i) { currLevel = i; }
 
 	// Driver function to sort the vector elements 
 	// by second element of pairs 
