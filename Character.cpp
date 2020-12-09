@@ -98,7 +98,7 @@ void Character::vehicleParams()
 		scaleHei = .3;
 		break;
 	case truck:
-		mass = 900;
+		mass = 700;
 		maxVel = 40;
 		scaleWid = .45;
 		scaleHei = .7;
