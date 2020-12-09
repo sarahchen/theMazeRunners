@@ -28,23 +28,13 @@ Model::Model()
 	FsGetWindowSize(width, height);
 	damaged = false;
 	soundTrig = 5;
+	currLevel = 1;
 	//healthPercentage = 100;
 	 /* initialize random seed: */
 	//srand(time(NULL));
 }
 
-void Model::updateHealth()
-{
-	if (caught()) {
-		auto currentTime = chrono::system_clock::now();
-		double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevDamageTime).count();
-		
-		if (elapsedTime > damageTimeThresh) {
-			theCharacter.setHealth(theCharacter.getHealth() - damageIncrement);
-			prevDamageTime = currentTime;
-		}
-	}
-}
+
 
 void Model::loadLeaders()
 {
@@ -159,6 +149,7 @@ void Model::checkItemCollected()
 			theCharacter.addScore(theItems[i].getPointVal());
 			soundTrig = theItems[i].getItemType();
 			theItems.erase(theItems.begin() + i);
+			break;
 		}
 	}
 
@@ -169,6 +160,49 @@ void Model::checkItemCollected()
 	//	else
 	//		soundTrig = 5;
 	//}
+}
+
+void Model::updateHealth()
+{
+	if (caught()) {
+		auto currentTime = chrono::system_clock::now();
+		double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevDamageTime).count();
+
+		if (elapsedTime > damageTimeThresh) {
+			theCharacter.setHealth(theCharacter.getHealth() - damageIncrement);
+			prevDamageTime = currentTime;
+		}
+	}
+}
+
+void Model::updateScore()
+{
+	auto currentTime = chrono::system_clock::now();
+	double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevScoreTime).count();
+	if (elapsedTime > 10) {	//one point per 10ms
+
+		theCharacter.setScore(theCharacter.getScore() + 1);
+		prevScoreTime = currentTime;
+	}
+	//cout << "current score = " << theCharacter.getScore() << '\n';
+}
+
+void Model::updateLevel()
+{
+	int score = theCharacter.getScore();
+	int levelIncrementThresh = 1000; //increment the level every 1000 points
+
+	double levelCheck = floor((double)score / (double)levelIncrementThresh) + 1;
+	if (levelCheck > currLevel) incrementLevel();
+
+	//cout << "current level = " << currLevel << '\n';
+	//cout << " level check = " << levelCheck << '\n';
+}
+
+void Model::incrementLevel()
+{
+	//do anything else here that will happen with an extra level increment
+	currLevel++;
 }
 
 void Model::update(ViewManager &theManager)
@@ -191,16 +225,13 @@ void Model::update(ViewManager &theManager)
 		theCharacter.setObstacleBack(true);
 	}
 
-	this->updateHealth();
-	theCharacter.updateKinematics(.1);
-	theCharacter.draw();
 	theMaze.drawMaze();
 
 	if (fabs(theCharacter.getVel()) > 0.3) {
 		theMaze.setPlayerCell(theCharacter);
 	}
 
-	for (int i = 0; i < numEnemies; i++) {
+	for (int i = 0; i < theEnemies.size(); i++) {
 		theEnemies[i].findBestPath(theMaze);
 		theEnemies[i].move();
 		theEnemies[i].draw();
@@ -220,11 +251,19 @@ void Model::update(ViewManager &theManager)
 		counter = 0;
 	}
 	else counter++;
+
+	updateHealth();
+	updateScore();
+	updateLevel();
+	theCharacter.updateKinematics(.1);
+	
+	theCharacter.draw();
+
 }
 
 bool Model::caught()
 {
-	for (int i = 0; i < numEnemies; i++) {
+	for (int i = 0; i < theEnemies.size(); i++) {
 
 		int enemyCell = theEnemies[i].getLocation().getLabel();
 		int playerCell = theMaze.getPlayerCell();

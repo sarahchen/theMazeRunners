@@ -40,6 +40,8 @@ private:
 	int itemEffectTimeThresh = 5000; //how much time (in ms) that item effects will last
 
 	chrono::system_clock::time_point gameStartTime = chrono::system_clock::now(); //time when the game was started
+	chrono::system_clock::time_point prevScoreTime = chrono::system_clock::now(); //time when the score was last incremented
+
 	int currLevel = 1; //level the player is at...starts at 1, goes up with points
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
@@ -115,6 +117,13 @@ public:
 
 	//check to see if item is collected
 	void checkItemCollected();
+
+	//updates the player score based on elapsed time
+	void updateScore();
+
+	//updates the level based on the player score
+	void updateLevel();
+	void incrementLevel();
 
 	//updates all aspects of the gameplay
 	void update(ViewManager& theManager);

@@ -49,7 +49,7 @@ void ViewManager::initialize() {
 	theModel.initialize();
 
 	theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-	theModel.setHealthPercentage(10);
+	theModel.setHealthPercentage(100);
 
 	theModel.initializeMaze();
 	theModel.initializeEnemy(textIds[3]);
