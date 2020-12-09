@@ -43,6 +43,7 @@ private:
 	bool newVehicleChosen;		//bool to register event of switching selected car
 	int selectionIndex;			//"index" or car number of car selected
 	int color = 0;
+	int prevLevel;
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 
@@ -118,6 +119,8 @@ public:
 	// displays the screen during gameplay
 		// pass it the same variables as startScreen for the exit button
 	void playScreen(int locX, int locY, int lb);
+
+	void levelUp();
 
 	//screen for at end of game to save score
 	void saveScreen();
