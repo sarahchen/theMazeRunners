@@ -146,6 +146,7 @@ void ViewManager::manage()
 				if (theModel.getCurrLevel() != prevLevel) {
 					levelUp();
 					prevLevel = theModel.getCurrLevel();
+					theModel.initializeEnemy(textIds[3]);
 				}
 
 
@@ -450,6 +451,8 @@ void ViewManager::startScreen(int locX, int locY, int lb, int mouseEvent)
 	glLineWidth(5);
 
 	if (onPlay) {
+		glColor3ub(0, 255, 0);
+		glLineWidth(5);
 		glBegin(GL_LINE_LOOP);
 		glVertex2d(width / 8, height / 7);
 		glVertex2d(width, height / 7);
@@ -458,6 +461,8 @@ void ViewManager::startScreen(int locX, int locY, int lb, int mouseEvent)
 		glEnd();
 	}
 	if (onExit) {
+		glColor3ub(255, 0, 0);
+		glLineWidth(5);
 		glBegin(GL_LINE_LOOP);
 		glVertex2d(width / 8, 4 * height / 5);
 		glVertex2d(width, 4 * height / 5);
@@ -689,13 +694,14 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	// red 
 	else
 		impact.setColorRGB(255, 0, 0);
-	impact.drawText((std::to_string(theModel.getHealthPercentage()) + "%").c_str(), 9 * width / 10, height / 6, 0.7);
-	impact.drawText("Health", 8.9 * width / 10, height / 10, 0.6);
+	impact.drawText((std::to_string(theModel.getHealthPercentage()) + "%").c_str(), 9.1 * width / 10, height / 6, 0.7);
+	impact.drawText("Health", 9 * width / 10, height / 10, 0.6);
 
-	string levelString = "Level: " + to_string(theModel.getCurrLevel());
-	impact.drawText(levelString.c_str(), 20, height / 10, 0.7);
+	impact.setColorRGB(0, 0, 0);
+	string levelString = "Level " + to_string(theModel.getCurrLevel());
+	impact.drawText(levelString.c_str(), 160, height / 10, 0.7);
 	string scoreString = "Score: " + to_string(theModel.getPlayerScore());
-	impact.drawText(scoreString.c_str(), 20, height / 6, 0.7);
+	impact.drawText(scoreString.c_str(), 160, height / 6, 0.7);
 
 }
 
@@ -714,7 +720,7 @@ void ViewManager::levelUp()
 		glEnd();
 
 		impact.setColorRGB(255, 255, 255);
-		string levelString = "Level: " + to_string(theModel.getCurrLevel());
+		string levelString = "Level " + to_string(theModel.getCurrLevel());
 		impact.drawText(levelString.c_str(), width/3, height/2, 2.0);
 
 		FsSwapBuffers();
@@ -733,8 +739,8 @@ void ViewManager::drawStaticElements()
 	glVertex2d(0, height / 5);
 	glEnd();
 	// draw the game title  >>>>>> will need to tweak the location <<<<<<
-	impact.setColorRGB(255, 255, 255);
-	impact.drawText("Maze Mania", width / 2.47, height / 6.9, 1.3);
+	impact.setColorRGB(0, .98, .98);
+	impact.drawText("Maze Mania", width / 2.46, height / 6.9, 1.3);
 	// box at the size of the screen for controls and leaderboard
 	glColor3ub(0, 192, 192);
 	glBegin(GL_QUADS);
@@ -775,7 +781,7 @@ void ViewManager::drawStaticElements()
 	// leaderboard text >>>> will need to tweak location <<<<
 	// will need access to some kind of array of previous scores
 		// likely another function that reads from a text file and creates a vector or array
-	glColor3ub(130, 160, 255);
+	glColor3ub(0, 230, 230);
 	glBegin(GL_QUADS);
 
 	glVertex2i(3, height / 2.2);
@@ -1115,7 +1121,7 @@ void ViewManager::drawCars(int locX, int locY, int lb)
 void ViewManager::drawHoverOutline(int leftX, int topY, int rightX, int bottomY)
 {
 	static int i = 0;
-	if (i < 5) {
+	if (true/*i < 5*/) {
 		glColor3ub(0, 0, 255);
 		glLineWidth(3);
 		glBegin(GL_LINE_LOOP);
@@ -1164,7 +1170,7 @@ void ViewManager::drawSelection(int leftX, int rightX, int topY, int bottomY)
 void ViewManager::drawColorSelect(int locX, int locY, int lb)
 {
 
-	glColor3ub(255, 255, 150); //background for color select box
+	glColor3ub(150, 200, 250); //background for color select box
 	glBegin(GL_QUADS);
 	glVertex2d(1.9 * width / 5, 3.5 * height / 5);
 	glVertex2d(2.2 * width / 3, 3.5 * height / 5);
@@ -1172,7 +1178,7 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	glVertex2d(1.9 * width / 5, 3.8 * height / 5);
 	glEnd();
 
-	glColor3ub(207, 181, 59); //outline for color select box
+	glColor3ub(100, 150, 200); //outline for color select box
 	glBegin(GL_LINE_LOOP);
 	glVertex2d(1.9 * width / 5, 3.5 * height / 5);
 	glVertex2d(2.2 * width / 3, 3.5 * height / 5);
@@ -1180,8 +1186,8 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	glVertex2d(1.9 * width / 5, 3.8 * height / 5);
 	glEnd();
 
-	garamond.setColorRGB(0, 0, 0);
-	garamond.drawText("COLOR SELECT", width / 2.1, 3.76 * height / 5, 0.4);
+	impact.setColorRGB(0, 0, 0);
+	impact.drawText("COLOR SELECT", width / 2.03, 3.76 * height / 5, 0.45);
 
 
 	glColor3ub(220, 220, 220); //background box for right triangle
@@ -1192,7 +1198,7 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	glVertex2d(2.2 * width / 3, 3.8 * height / 5);
 	glEnd();
 
-	glColor3ub(127, 230, 0); //outline for right color select box
+	glColor3ub(100, 150, 200); //outline for right color select box
 	glBegin(GL_LINE_LOOP);
 	glVertex2d(2.2 * width / 3, 3.5 * height / 5);
 	glVertex2d(2.33 * width / 3, 3.5 * height / 5);
@@ -1200,14 +1206,14 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	glVertex2d(2.2 * width / 3, 3.8 * height / 5);
 	glEnd();
 
-	glColor3ub(127, 255, 0); // filled in right triangle
+	glColor3ub(0, 0, 200); // filled in right triangle
 	glBegin(GL_TRIANGLES);
 	glVertex2d(2.22 * width / 3, 3.55 * height / 5);
 	glVertex2d(2.31 * width / 3, 3.65 * height / 5);
 	glVertex2d(2.22 * width / 3, 3.75 * height / 5);
 	glEnd();
 
-	glColor3ub(100, 100, 100); // outline right triangle
+	glColor3ub(0, 0, 100); // outline right triangle
 	glBegin(GL_LINE_LOOP);
 	glVertex2d(2.22 * width / 3, 3.55 * height / 5);
 	glVertex2d(2.31 * width / 3, 3.65 * height / 5);
@@ -1223,7 +1229,7 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	glVertex2d(1.9 * width / 5, 3.8 * height / 5);
 	glEnd();
 
-	glColor3ub(127, 230, 0); //outline for left color select box
+	glColor3ub(100, 150, 200); //outline for left color select box
 	glBegin(GL_LINE_LOOP);
 	glVertex2d(1.9 * width / 5, 3.5 * height / 5);
 	glVertex2d(1.7 * width / 5, 3.5 * height / 5);
@@ -1231,14 +1237,14 @@ void ViewManager::drawColorSelect(int locX, int locY, int lb)
 	glVertex2d(1.9 * width / 5, 3.8 * height / 5);
 	glEnd();
 
-	glColor3ub(127, 255, 0); // filled in left triangle
+	glColor3ub(0, 0, 200); // filled in left triangle
 	glBegin(GL_TRIANGLES);
 	glVertex2d(1.87 * width / 5, 3.55 * height / 5);
 	glVertex2d(1.75 * width / 5, 3.65 * height / 5);
 	glVertex2d(1.87 * width / 5, 3.75 * height / 5);
 	glEnd();
 
-	glColor3ub(100, 100, 100); // outline left triangle
+	glColor3ub(0, 0, 100); // outline left triangle
 	glBegin(GL_LINE_LOOP);
 	glVertex2d(1.87 * width / 5, 3.55 * height / 5);
 	glVertex2d(1.73 * width / 5, 3.65 * height / 5);
@@ -1272,7 +1278,7 @@ void ViewManager::monitorColorSelect(int locX, int locY, int lb, int mouseEvent)
 	if (locX > 1.7 * width / 5 && locX < 1.9 * width / 5)
 		if (locY > 3.5 * height / 5 && locY < 3.8 * height / 5) {
 			onLeftColor = true;
-			glColor3ub(240, 240, 50);
+			glColor3ub(0, 250, 0);
 			glBegin(GL_LINE_LOOP);
 			glVertex2d(1.9 * width / 5, 3.5 * height / 5);
 			glVertex2d(1.7 * width / 5, 3.5 * height / 5);
@@ -1285,7 +1291,7 @@ void ViewManager::monitorColorSelect(int locX, int locY, int lb, int mouseEvent)
 	if (locX > 2.2 * width / 3 && locX < 2.33 * width / 3)
 		if (locY > 3.5 * height / 5 && locY < 3.8 * height / 5) {
 			onRightColor = true;
-			glColor3ub(240, 240, 50); //outline for right color select box
+			glColor3ub(0, 250, 0); //outline for right color select box
 			glBegin(GL_LINE_LOOP);
 			glVertex2d(2.2 * width / 3, 3.5 * height / 5);
 			glVertex2d(2.33 * width / 3, 3.5 * height / 5);

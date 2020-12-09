@@ -12,7 +12,7 @@ protected:
     int damage;                 //how much damage does the enemy do to the player
     Cell currentLocation;       //current location of the enemy
     list<Cell> movementPlan;    //stores the plan for subsequent moves
-    int size = 37;              //pixels - size of the enemy character drawing
+    int size = 45;              //pixels - size of the enemy character drawing
 
     //timestamp of the last time the enemy moved
     chrono::system_clock::time_point prevMoveTime = chrono::system_clock::now(); 
