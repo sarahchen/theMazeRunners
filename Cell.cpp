@@ -178,3 +178,16 @@ void Cell::drawCell()
 
 	glLoadIdentity();
 }
+
+void Cell::highlightCell()
+{
+	// set up local coordinate system in the Maze class when drawing each node
+
+	glBegin(GL_POLYGON);
+	for (int i = 5; i >= 0; i--) {
+		glVertex2d(cellNodes[(i + 1) % 6].x, cellNodes[(i + 1) % 6].y);
+		glVertex2d(cellNodes[i].x, cellNodes[i].y);
+	}
+	glEnd();
+	glLoadIdentity();
+}

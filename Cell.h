@@ -89,4 +89,5 @@ public:
 
 	// draws the cell with corresponding walls
 	void drawCell();
+	void highlightCell();
 };

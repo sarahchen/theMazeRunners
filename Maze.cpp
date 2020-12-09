@@ -210,6 +210,10 @@ void Maze::generateMaze(int currLevel)
 
 void Maze::drawMaze()
 {
+    // Highlight player cell
+    glColor3ub(110, 184, 189);
+    playerCell.highlightCell();
+
     // setMazeColor
     glColor3ub(0, 120, 130);
     int side = 1;
@@ -218,10 +222,6 @@ void Maze::drawMaze()
         cellIdx = i * side;
         Grid[cellIdx].drawCell();
     }
-
-    // Highlight player cell
-    //glColor3ub(0, 150, 130);
-    //playerCell.drawCell();
 }
 
 //finds the cell that the player is currently in and sets that variable in Maze
