@@ -211,7 +211,7 @@ void Maze::generateMaze(int currLevel)
 void Maze::drawMaze()
 {
     // Highlight player cell
-    glColor3ub(110, 184, 189);
+    glColor3ub(140, 210, 255);
     playerCell.highlightCell();
 
     // setMazeColor
