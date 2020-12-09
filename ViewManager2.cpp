@@ -619,11 +619,13 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 			ID = textIdsRegCar[color];
 			break;
 		}
-		theModel.initializeCharacter(selectedCar, ID);
-		//theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
-		theModel.initializeMaze();
-		theModel.initializeEnemy(textIds[3]);
-		theModel.setHealthPercentage(100);
+		//theModel.initializeCharacter(selectedCar, ID);
+		////theModel.initializeCharacter(selectedCar, textIds[selectionIndex]); //textIds[selectionIndex]);
+		//theModel.initializeMaze();
+		//theModel.initializeEnemy(textIds[3]);
+		//theModel.setHealthPercentage(100);
+
+		initialize();
 	}
 
 	drawStaticElements();
