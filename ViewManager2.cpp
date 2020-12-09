@@ -120,16 +120,24 @@ void ViewManager::manage()
 			if (theModel.getHealthPercentage() > 0) {
 				playScreen(locX, locY, lb);
 				key = FsInkey();
+
 				// TESTING
 				if (!background.isPlaying())
 					background.playOnce();
+
 				switch (theModel.getSoundTrig()) {
 				case 0:
 					coffee.playOnce();
+					theModel.setSoundTrig(5);
+					break;
 				case 1:
 					starSound.playOnce();
+					theModel.setSoundTrig(5);
+					break;
 				case 2:
 					cha_ching.playOnce();
+					theModel.setSoundTrig(5);
+					break;
 				}
 
 				if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {

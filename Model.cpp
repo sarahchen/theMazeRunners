@@ -147,27 +147,28 @@ void Model::addItem(itemType item, GLuint Id)
 
 void Model::checkItemCollected()
 {
-	vector<bool> temp;
-	for (int i = 0; i < theItems.size(); i++) {
-		temp.push_back(false);
-	}
+	//vector<bool> temp;
+	//for (int i = 0; i < theItems.size(); i++) {
+	//	temp.push_back(false);
+	//}
 
 	for (int i = 0; i < theItems.size(); i++) {
 		if (theMaze.getPlayerCell() == theItems[i].getCell()) {
-			//cout << "On an item!!";
-			temp[i] = true;
-		}
-	}
-
-	for (int i = 0; i < theItems.size(); i++) {
-		if (temp[i] == true) {
+			prevPickupTime = chrono::system_clock::now();
+			//temp[i] = true;
 			theCharacter.addScore(theItems[i].getPointVal());
 			soundTrig = theItems[i].getItemType();
 			theItems.erase(theItems.begin() + i);
 		}
-		else
-			soundTrig = 5;
 	}
+
+	//for (int i = 0; i < theItems.size(); i++) {
+	//	if (temp[i] == true) {
+	//		
+	//	}
+	//	else
+	//		soundTrig = 5;
+	//}
 }
 
 void Model::update(ViewManager &theManager)

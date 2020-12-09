@@ -36,8 +36,11 @@ private:
 	int numEnemies = 3;
 	
 	vector<Item> theItems;
+	chrono::system_clock::time_point prevPickupTime = chrono::system_clock::now(); //time when last item was grabbed
+	int itemEffectTimeThresh = 5000; //how much time (in ms) that item effects will last
 
-	int currLevel = 1; //level the player is at...starts at 1, goes up with time (every x minutes?)
+	chrono::system_clock::time_point gameStartTime = chrono::system_clock::now(); //time when the game was started
+	int currLevel = 1; //level the player is at...starts at 1, goes up with points
 
 	vector<pair<string, int>> leaders;		//vector to hold the leaderboard data
 	// stored for damage mechanic (bool caught())
@@ -48,7 +51,7 @@ private:
 
 	//timestamp of the last time the character was damaged
 	chrono::system_clock::time_point prevDamageTime = chrono::system_clock::now();
-	double damageTimeThresh = 1000;		//how much time (in ms) the to wait until dealing damage again
+	double damageTimeThresh = 1000;		//how much time (in ms) to wait until dealing damage again
 	double damageIncrement = 0.5;		//increment for dealing damage
 
 	int soundTrig;
@@ -58,6 +61,7 @@ public:
 	Model();
 
 	int getSoundTrig() { return soundTrig; }
+	void setSoundTrig(int input) { soundTrig = input; }
 	int getHealthPercentage() { return theCharacter.getHealth(); }
 	void setHealthPercentage(int health) { theCharacter.setHealth(health); }
 	void updateHealth();
