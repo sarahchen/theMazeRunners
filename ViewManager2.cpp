@@ -40,6 +40,7 @@ ViewManager::ViewManager()
 
 	newVehicleChosen = false;
 	transpR = 1.0, transpG = 1.0, transpB = 1.0;
+	prevLevel = 1;
 
 	//srand(time(NULL));
 }
@@ -53,7 +54,9 @@ void ViewManager::initialize() {
 
 	theModel.initializeMaze();
 	theModel.initializeEnemy(textIds[3]);
-
+	prevLevel = 1;
+	theModel.setCurrLevel(1);
+	
 }
 
 void ViewManager::manage()
@@ -76,7 +79,7 @@ void ViewManager::manage()
 
 	initialize();
 
-	Sound coffee("coffee.wav");
+	Sound coffee("engineRev.wav");
 	Sound cha_ching("cash_register.wav");
 	Sound starSound("star.wav");
 	Sound background("backgroundMusic.wav");
@@ -139,6 +142,12 @@ void ViewManager::manage()
 					theModel.setSoundTrig(5);
 					break;
 				}
+
+				if (theModel.getCurrLevel() != prevLevel) {
+					levelUp();
+					prevLevel = theModel.getCurrLevel();
+				}
+
 
 				if (FsGetKeyState(FSKEY_LEFT) && FsGetKeyState(FSKEY_UP)) {
 					/*		theCharacter.goForward();
@@ -233,10 +242,8 @@ void ViewManager::manage()
 					ID = textIdsRegCar[color];
 					break;
 				}
-
-				initialize();
-
 				theModel.saveLeaders();
+				initialize();
 			}
 		}
 		FsSwapBuffers();
@@ -684,6 +691,35 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 		impact.setColorRGB(255, 0, 0);
 	impact.drawText((std::to_string(theModel.getHealthPercentage()) + "%").c_str(), 9 * width / 10, height / 6, 0.7);
 	impact.drawText("Health", 8.9 * width / 10, height / 10, 0.6);
+
+	string levelString = "Level: " + to_string(theModel.getCurrLevel());
+	impact.drawText(levelString.c_str(), 20, height / 10, 0.7);
+	string scoreString = "Score: " + to_string(theModel.getPlayerScore());
+	impact.drawText(scoreString.c_str(), 20, height / 6, 0.7);
+
+}
+
+void ViewManager::levelUp()
+{
+	auto start = chrono::high_resolution_clock::now();
+	while (chrono::duration<double>(chrono::high_resolution_clock::now() - start).count() < 1) {
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+		glColor3ub(0, 100, 100);
+		glBegin(GL_QUADS);
+		glVertex2d(0, 0);
+		glVertex2d(width, 0);
+		glVertex2d(width, height);
+		glVertex2d(0, height);
+		glEnd();
+
+		impact.setColorRGB(255, 255, 255);
+		string levelString = "Level: " + to_string(theModel.getCurrLevel());
+		impact.drawText(levelString.c_str(), width/3, height/2, 2.0);
+
+		FsSwapBuffers();
+		FsSleep(20);
+	}
 }
 
 void ViewManager::drawStaticElements()
@@ -819,32 +855,32 @@ void ViewManager::gameOverScreen()
 
 		glColor3b(0, 100, 100);
 		glBegin(GL_QUADS);
-		glVertex2i(0, 3 * height / 4);
-		glVertex2i(width / 2, 3 * height / 4);
-		glVertex2i(width / 2, height);
-		glVertex2i(0, height);
+		glVertex2i(0, 3 * height / 5);
+		glVertex2i(width, 3 * height / 5);
+		glVertex2i(width, 4*height/5);
+		glVertex2i(0, 4*height/5);
 		glEnd();
 		comicSans.setColorRGB(0, 0, 0);
-		comicSans.drawText("MENU", width / 8 + 50, 3.8 * height / 4, 0.8);
+		comicSans.drawText("MENU", width / 2 - 125, 3.8 * height / 5, 0.8);
 
 		glColor3b(100, 100, 0);
 		glBegin(GL_QUADS);
-		glVertex2i(width / 2, 3 * height / 4);
-		glVertex2i(width, 3 * height / 4);
+		glVertex2i(0, 4 * height / 5);
+		glVertex2i(width, 4 * height / 5);
 		glVertex2i(width, height);
-		glVertex2i(width / 2, height);
+		glVertex2i(0, height);
 		glEnd();
 		comicSans.setColorRGB(0, 0, 0);
-		comicSans.drawText("RAGE QUIT", 4.5 * width / 8, 3.8 * height / 4, 0.8);
+		comicSans.drawText("RAGE QUIT", width / 2 - 250, 4.8 * height / 5, 0.8);
 
-		if (locY < height && locY > 0.75 * height) {
-			if (locX > 0 && locX < width / 2)
+		if (locY < 4*height/5 && locY > 3 * height/5) {
+			if (locX > 0 && locX < width)
 				onMenu = true;
 			else
 				onMenu = false;
 		}
-		if (locY < height && locY > 0.75 * height) {
-			if (locX > width / 2 && locX < width)
+		if (locY < height && locY > 4* height/5) {
+			if (locX > 0 && locX < width)
 				onExit = true;
 			else
 				onExit = false;
@@ -853,18 +889,18 @@ void ViewManager::gameOverScreen()
 		glLineWidth(10);
 		if (onMenu) {
 			glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 3 * height / 4);
-			glVertex2i(width / 2, 3 * height / 4);
-			glVertex2i(width / 2, height);
-			glVertex2i(0, height);
+			glVertex2i(0, 3 * height / 5);
+			glVertex2i(width, 3 * height / 5);
+			glVertex2i(width, 4 * height / 5);
+			glVertex2i(0, 4 * height / 5);
 			glEnd();
 		}
 		if (onExit) {
 			glBegin(GL_LINE_LOOP);
-			glVertex2i(width / 2, 3 * height / 4);
-			glVertex2i(width, 3 * height / 4);
+			glVertex2i(0, 4 * height / 5);
+			glVertex2i(width, 4 * height / 5);
 			glVertex2i(width, height);
-			glVertex2i(width / 2, height);
+			glVertex2i(0, height);
 			glEnd();
 		}
 
