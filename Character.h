@@ -47,6 +47,7 @@ protected:
 	double energyLevel;
 
 	int Force, mass, maxVel;
+	double maxVelMult = 1;
 	double accel, mu;
 	double ax, ay, bx, by, cx, cy, dx, dy;  //car edges
 
@@ -92,6 +93,7 @@ public:
 	void setY(double yCoord) { posCenter.y = yCoord; }
 	void setZ(double zCoord) { posCenter.z = zCoord; }
 	void setVel(double vel) { velocity = vel; }
+	void setMaxVelMult(double mult) { maxVelMult = mult; }
 	void setHei(double height) { thisCharacter.hei = height; }
 	void setWid(double width) { thisCharacter.wid = width; }
 	void setDep(double depth) { thisCharacter.dep = depth; }

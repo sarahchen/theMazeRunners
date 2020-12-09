@@ -16,7 +16,7 @@ commented in to show what I was going for.
 #include "fssimplewindow.h"
 
 #define PI 3.1415926
-#define CELL_RADIUS 40
+#define CELL_RADIUS 47.5
 
 struct node {
 	double x;

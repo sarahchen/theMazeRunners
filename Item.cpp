@@ -24,10 +24,10 @@ void Item::assignPointVal()
 {
 	switch (thisItem) {
 	case coffee:
-		pointVal = 40;
+		pointVal = 0;
 		break;
 	case star:
-		pointVal = 80;
+		pointVal = 0;
 		break;
 	case moneyBag:
 		pointVal = 200;

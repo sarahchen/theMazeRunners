@@ -663,8 +663,8 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	// placeholder for where the game map will go
 	glColor3ub(130, 200, 235);
 	glBegin(GL_QUADS);
-	glVertex2d(width / 8, height / 5.5);
-	glVertex2d(width, height / 5.5);
+	glVertex2d(width / 8, height / 6);
+	glVertex2d(width, height / 6);
 	glVertex2d(width, height);
 	glVertex2d(width / 8, height);
 	glEnd();
@@ -682,14 +682,14 @@ void ViewManager::playScreen(int locX, int locY, int lb)
 	// red 
 	else
 		impact.setColorRGB(255, 0, 0);
-	impact.drawText((std::to_string(theModel.getHealthPercentage()) + "%").c_str(), 8.75 * width / 10, height / 6, 0.7);
-	impact.drawText("Health", 8.6 * width / 10, height / 10, 0.6);
+	impact.drawText((std::to_string(theModel.getHealthPercentage()) + "%").c_str(), 9 * width / 10, height / 6, 0.7);
+	impact.drawText("Health", 8.9 * width / 10, height / 10, 0.6);
 }
 
 void ViewManager::drawStaticElements()
 {
 	// title box at the top of the screen
-	glColor3ub(192, 192, 192);
+	glColor3ub(0, 192, 192);
 	glBegin(GL_QUADS);
 	glVertex2d(0, 0);
 	glVertex2d(width, 0);
@@ -697,10 +697,10 @@ void ViewManager::drawStaticElements()
 	glVertex2d(0, height / 5);
 	glEnd();
 	// draw the game title  >>>>>> will need to tweak the location <<<<<<
-	oldEnglish.setColorRGB(255, 255, 255);
-	oldEnglish.drawText("Maze Mania", width / 4, height / 6.9, 1.1);
+	impact.setColorRGB(255, 255, 255);
+	impact.drawText("Maze Mania", width / 2.47, height / 6.9, 1.3);
 	// box at the size of the screen for controls and leaderboard
-	glColor3ub(192, 192, 192);
+	glColor3ub(0, 192, 192);
 	glBegin(GL_QUADS);
 	glVertex2d(0, height / 5);
 	glVertex2d(width / 8, height / 5);
@@ -710,11 +710,11 @@ void ViewManager::drawStaticElements()
 	// controls text >>>>> will need to tweak the location <<<<< 
 		// this could be a user preference change (wasd or arrows)
 	impact.setColorRGB(0, 0, 0);
-	impact.drawText("CONTROLS", 5, height / 5 + 50, 0.5);
+	impact.drawText("CONTROLS", 13, height / 5 + 50, 0.5);
 	//impact.drawText("^", 55, height / 5 + 90, 0.5);
 	//impact.drawText("<-  v  ->", 10, height / 5 + 110, 0.5);
 
-	glColor3ub(192, 192, 192);
+	glColor3ub(0, 192, 192);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

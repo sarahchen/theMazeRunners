@@ -36,8 +36,14 @@ private:
 	int numEnemies = 3;
 	
 	vector<Item> theItems;
-	chrono::system_clock::time_point prevPickupTime = chrono::system_clock::now(); //time when last item was grabbed
+	chrono::system_clock::time_point prevCoffeePickupTime = chrono::system_clock::now(); //time when coffee was grabbed
+	chrono::system_clock::time_point prevStarPickupTime = chrono::system_clock::now(); //time when star was grabbed
 	int itemEffectTimeThresh = 5000; //how much time (in ms) that item effects will last
+
+	//flags for whether item effects are happening
+	bool coffeeSet = false;
+	bool starSet = false;
+
 
 	chrono::system_clock::time_point gameStartTime = chrono::system_clock::now(); //time when the game was started
 	chrono::system_clock::time_point prevScoreTime = chrono::system_clock::now(); //time when the score was last incremented
@@ -54,7 +60,7 @@ private:
 	//timestamp of the last time the character was damaged
 	chrono::system_clock::time_point prevDamageTime = chrono::system_clock::now();
 	double damageTimeThresh = 1000;		//how much time (in ms) to wait until dealing damage again
-	double damageIncrement = 0.5;		//increment for dealing damage
+	double damageIncrement = 1;		//increment for dealing damage
 
 	int soundTrig;
 
@@ -117,12 +123,13 @@ public:
 
 	//check to see if item is collected
 	void checkItemCollected();
+	void checkItemEffects();
 
 	//updates the player score based on elapsed time
 	void updateScore();
 
 	//updates the level based on the player score
-	void updateLevel();
+	void checkLevel();
 	void incrementLevel();
 
 	//updates all aspects of the gameplay

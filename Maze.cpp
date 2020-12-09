@@ -6,8 +6,8 @@
 Maze::Maze() 
 {
     // for now, 10x16 Grid of Hexagons
-    numRows = 7;
-    numCols = 16;
+    numRows = 6;
+    numCols = 14;
     GRID_SIZE = numRows * numCols;
 
     int rowSize = numCols;
@@ -184,7 +184,7 @@ void Maze::generateMaze(int currLevel)
 
     // randomly tear down some walls
     // the lower the level, the more walls it tears down
-    for (int i = 0; i < GRID_SIZE - currLevel * 10; i++) {
+    for (int i = 0; i < GRID_SIZE - (currLevel * 1); i++) {
         // randomly choose a cell
         int randlbl = rand() % GRID_SIZE + 1;
         if (randlbl == 0) { randlbl = 1; }
@@ -211,7 +211,7 @@ void Maze::generateMaze(int currLevel)
 void Maze::drawMaze()
 {
     // setMazeColor
-    glColor3ub(255, 0, 0);
+    glColor3ub(0, 120, 130);
     int side = 1;
     int cellIdx = 0;
     for (int i = 1; i < GRID_SIZE + 1; i++) {
@@ -220,8 +220,8 @@ void Maze::drawMaze()
     }
 
     // Highlight player cell
-    glColor3ub(0, 0, 255);
-    playerCell.drawCell();
+    //glColor3ub(0, 150, 130);
+    //playerCell.drawCell();
 }
 
 //finds the cell that the player is currently in and sets that variable in Maze

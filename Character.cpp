@@ -74,7 +74,7 @@ void Character::setCarInfo(int xpos, int ypos, carType car, GLuint Id)
 	initPos.y = ypos;
 	thisCar = car;
 	textID = Id;
-	headingAngle = M_PI_2;
+	
 	vehicleParams();
 	initialize();
 }
@@ -138,6 +138,7 @@ void Character::initialize()
 	setY(initPos.y);
 	setZ(initPos.z);
 	setVel(0);
+	headingAngle = M_PI_2;
 }
 
 void Character::reset()
@@ -147,12 +148,12 @@ void Character::reset()
 
 void Character::updateKinematics(double deltaT)
 {
-	// cout << "Force: " << Force << "    Acceleration: " << accel << "    Velocity:  "  << velocity << endl;
+	 //cout << "Force: " << Force << "    Acceleration: " << accel << "    Velocity:  "  << velocity << endl;
 
 	if (isValidMove()) {
 		posCenter.x += velocity * cos(headingAngle) * deltaT;
 		posCenter.y -= velocity * sin(headingAngle) * deltaT;
-		velocity = std::max(-double(maxVel), std::min(velocity + accel * deltaT, double(maxVel)));
+		velocity = std::max(-double(maxVel * maxVelMult), std::min(velocity + accel * deltaT, double(maxVel * maxVelMult)));
 		//if (velocity > 10) {
 		//	velocity = 10;
 		//	Force = 0;
@@ -189,13 +190,13 @@ void Character::adjustOrientation(double angleAdjust)
 
 void Character::goForward()
 {
-	if (velocity > 0) { setForce(9000); }
+	if (velocity > 0) { setForce(9000 * maxVelMult); }
 	else { setForce(16000); }
 }
 
 void Character::goBackward()
 {
-	if (velocity < 0) { setForce(-9000); }
+	if (velocity < 0) { setForce(-9000 * maxVelMult); }
 	else { setForce(-16000); }
 }
 

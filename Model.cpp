@@ -145,10 +145,21 @@ void Model::checkItemCollected()
 
 	for (int i = 0; i < theItems.size(); i++) {
 		if (theMaze.getPlayerCell() == theItems[i].getCell()) {
-			prevPickupTime = chrono::system_clock::now();
+			
 			//temp[i] = true;
 			theCharacter.addScore(theItems[i].getPointVal());
+
 			soundTrig = theItems[i].getItemType();
+
+			if (soundTrig == 0) {
+				prevCoffeePickupTime = chrono::system_clock::now();
+				coffeeSet = true;
+			}
+			else if (soundTrig == 1) {
+				prevStarPickupTime = chrono::system_clock::now();
+				starSet = true;
+			}
+
 			theItems.erase(theItems.begin() + i);
 			break;
 		}
@@ -161,6 +172,39 @@ void Model::checkItemCollected()
 	//	else
 	//		soundTrig = 5;
 	//}
+}
+
+void Model::checkItemEffects()
+{
+	if (starSet) {
+		auto currentTime = chrono::system_clock::now();
+		double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevStarPickupTime).count();
+
+		if (elapsedTime > itemEffectTimeThresh &&
+			theMaze.validCharMove(theCharacter, 0) &&
+			theMaze.validCharMove(theCharacter, 1)) {
+
+			//undo star effects
+			starSet = false;
+		}
+	}
+
+	if (coffeeSet) {
+		auto currentTime = chrono::system_clock::now();
+		double elapsedTime = chrono::duration_cast<std::chrono::milliseconds> (currentTime - prevCoffeePickupTime).count();
+		//cout << "coffee elapsed time: " << elapsedTime << '\n';
+
+		//do coffee effects here
+		theCharacter.setMaxVelMult(4);
+		//cout << "coffee effects active\n";
+
+		if (elapsedTime > itemEffectTimeThresh) {
+			//undo coffee effects
+			theCharacter.setMaxVelMult(1);
+			//cout << "coffee effects turned off\n";
+			coffeeSet = false;
+		}
+	}
 }
 
 void Model::updateHealth()
@@ -188,10 +232,10 @@ void Model::updateScore()
 	//cout << "current score = " << theCharacter.getScore() << '\n';
 }
 
-void Model::updateLevel()
+void Model::checkLevel()
 {
 	int score = theCharacter.getScore();
-	int levelIncrementThresh = 1000; //increment the level every 1000 points
+	int levelIncrementThresh = 500; //increment the level every 500 points
 
 	double levelCheck = floor((double)score / (double)levelIncrementThresh) + 1;
 	if (levelCheck > currLevel) incrementLevel();
@@ -204,6 +248,10 @@ void Model::incrementLevel()
 {
 	//do anything else here that will happen with an extra level increment
 	currLevel++;
+	damageIncrement++;
+	initializeMaze();
+	theCharacter.reset();
+	//add overlay for level up
 }
 
 void Model::update(ViewManager &theManager)
@@ -212,21 +260,21 @@ void Model::update(ViewManager &theManager)
 	// if it is a validcharmove, there is no obstacle
 
 	// check front
-	if (theMaze.validCharMove(theCharacter, 0)) {
+	if (theMaze.validCharMove(theCharacter, 0) || starSet) {
 		theCharacter.setObstacleFront(false);
 	}
 	else {
 		theCharacter.setObstacleFront(true);
 	}
 	// check back
-	if (theMaze.validCharMove(theCharacter, 1)) {
+	if (theMaze.validCharMove(theCharacter, 1) || starSet) {
 		theCharacter.setObstacleBack(false);
 	}
 	else {
 		theCharacter.setObstacleBack(true);
 	}
 
-	theMaze.drawMaze();
+	if (!starSet) theMaze.drawMaze();
 
 	if (fabs(theCharacter.getVel()) > 0.3) {
 		theMaze.setPlayerCell(theCharacter);
@@ -239,6 +287,7 @@ void Model::update(ViewManager &theManager)
 	}
 
 	checkItemCollected();
+	checkItemEffects();
 	for (int i = 0; i < theItems.size(); i++) theItems[i].draw();
 
 	//add item to the model!!
@@ -255,7 +304,7 @@ void Model::update(ViewManager &theManager)
 
 	updateHealth();
 	updateScore();
-	updateLevel();
+	checkLevel();
 	theCharacter.updateKinematics(.1);
 	
 	theCharacter.draw();
