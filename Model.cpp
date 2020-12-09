@@ -94,6 +94,7 @@ void Model::initialize()
 	theEnemies.clear();			//clear out enemies
 	theItems.clear();			//clear out items
 	theCharacter.setScore(0);	//clear score
+	damageIncrement = 1;
 
 	loadLeaders();  // load the leaderboard file
 
