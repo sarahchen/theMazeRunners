@@ -59,7 +59,7 @@ private:
 
 	//timestamp of the last time the character was damaged
 	chrono::system_clock::time_point prevDamageTime = chrono::system_clock::now();
-	double damageTimeThresh = 1000;		//how much time (in ms) to wait until dealing damage again
+	double damageTimeThresh = 500;		//how much time (in ms) to wait until dealing damage again
 	double damageIncrement = 1;		//increment for dealing damage
 
 	int soundTrig;

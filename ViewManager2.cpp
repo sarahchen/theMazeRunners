@@ -83,7 +83,7 @@ void ViewManager::manage()
 	Sound cha_ching("cash_register.wav");
 	Sound starSound("star.wav");
 	Sound background("backgroundMusic.wav");
-	background.setVolume(0.3);
+	background.setVolume(0.0);
 
 	itemType theItem;
 	GLuint itemId;
@@ -126,7 +126,7 @@ void ViewManager::manage()
 
 				// TESTING
 				if (!background.isPlaying())
-					background.playOnce();
+					//background.playOnce();
 
 				switch (theModel.getSoundTrig()) {
 				case 0:

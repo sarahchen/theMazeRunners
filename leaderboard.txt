@@ -1,5 +1,5 @@
-anton	1426
-a	300
-a	300
-a	300
-a	300
+Sarah	1600
+Anton	1426
+Tester	1293
+Ryder	1245
+Nestor	985

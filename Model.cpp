@@ -77,7 +77,7 @@ void Model::drawLeaders()
 		name = iter.first;
 		comicSans.drawText(name, 5, hei, 0.18);
 		score = to_string(iter.second);
-		comicSans.drawText(score, 115, hei, 0.18);
+		comicSans.drawText(score, 110, hei, 0.18);
 		hei += 30;
 	}
 }
