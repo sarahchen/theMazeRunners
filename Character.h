@@ -15,37 +15,46 @@ using namespace std;
 
 class ViewManager;
 
+//for storing the character's position (z would be future expansion)
 struct vertex {
 	double x, y, z;
 };
 
+//for storing character features
 struct characterFeatures {
 	double hei, wid, dep;
 	string label;
 };
 
+//for specifying which type of car this character is
 enum carType { lambo, F1, truck, regCar };
 
 class Character {
+//protected so that enemy can inheret from it
 protected:
 	//window width and height
 	int width, height;
-
+	
+	//car type for this character
 	carType thisCar;
 
+	//boolean variables to identify illegal moves (will hit obstacles)
 	bool willHitObstacleFront = false;
 	bool willHitObstacleBack = false;
 
+	//features and orientations to define the character
 	characterFeatures thisCharacter;
 	vertex initPos, posCenter;
 	double velocity;
-
 	double headingAngle;
+	
+	//game specific variables related to the character
 	bool gameOver;
 	double health;
 	int score, livesRemaining;
 	double energyLevel;
-
+	
+	//vehicle dynamics
 	int Force, mass, maxVel;
 	double maxVelMult = 1;
 	double accel, mu;
