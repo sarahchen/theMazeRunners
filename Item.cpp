@@ -6,6 +6,7 @@
 #include "Cell.h"	//for cell radius
 #include "Maze.h"
 
+//class constructor where we set the parameters such as textures, size, and location
 Item::Item(Cell inputCell, itemType item, GLuint Id, Maze theMaze)
 {
 	thisItem = item;
@@ -22,6 +23,8 @@ Item::Item(Cell inputCell, itemType item, GLuint Id, Maze theMaze)
 
 void Item::assignPointVal()
 {
+	//only assign point value bonus for getting the money bag
+	//however, can easily change that with this switch case in the future
 	switch (thisItem) {
 	case coffee:
 		pointVal = 0;
@@ -45,6 +48,7 @@ void Item::draw()
 
 	glBegin(GL_QUADS);
 
+	//draw the item based on which item is selected (to fit geometry of the item best)
 	if (thisItem == star) {
 		glTexCoord2d(0.0, 0.0);
 		glVertex2i(pos.x - wid / 2, pos.y - hei / 2);
