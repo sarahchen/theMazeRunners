@@ -87,27 +87,8 @@ public:
 	//gets all the text IDs ready to then be called as a parameter in the createTextId function
 	void prepareTheTextIds();
 
+	// selects a random id and the associated texture to create
 	void getRandomItem(itemType& item, GLuint& Id);
-
-	////load the leaderboard
-	//void load();
-
-	////display the loaded  leaderboard data
-	//void drawLeaders();
-
-	////save the leaderboard
-	//void save();
-
-	//// Driver function to sort the vector elements 
-	//// by second element of pairs 
-	//bool sortbysec(const pair<int, int>& a,
-	//	const pair<int, int>& b);
-
-	//void readFile(std::ifstream& inFile);
-	//// reads the given file for accesing saved leaderboard
-
-	//void writeFile(std::ofstream& outFile);
-	//// loop through the leaders vector and writes to output file
 
 	//get methods so that each class can be in charge of assigning its own text ID to graphics
 	GLuint getCarID() { return textIds[0]; }
@@ -148,33 +129,5 @@ public:
 
 	//adjusts the transparency of the selected car
 	void colorSelect(int locX, int locY, int lb);
-	//void setCarSelection(bool &selection, bool *selectionOptions);
-	//void drawHoverOutline(int leftX, int topY, int rightX, int bottomY);
+
 };
-
-
-//public:
-//	//class constructor
-//	ViewManager();
-//
-//	//basically runs the entire program
-//	void manage();
-//
-//
-//	//pass it the decoder name, the png file name, and whether you want to add it to the text id vector for the fruits or robot
-//	void createTextId(YsRawPngDecoder& png, const char* fileName, vector<GLuint>& textIds);
-//
-//	//gets all the text IDs ready to then be called as a parameter in the createTextId function
-//	void prepareTheTextIds();
-//
-//
-//	//get methods so that each class can be in charge of assigning its own text ID to graphics
-//	GLuint getCarID() { return textIds[0]; }
-//
-//	// displays the start screen
-//		// locX and locY are mouse locations and lb is the left button part of mouse event
-//	void startScreen(int locX, int locY, int lb);
-//	// displays the screen during gameplay
-//		// pass it the same variables as startScreen for the exit button
-//	void playScreen(int locX, int locY, int lb);
-//};
