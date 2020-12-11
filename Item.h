@@ -17,14 +17,12 @@ Header file for item object for game
 
 using namespace std;
 
-//struct vertex {
-//	double x, y, z;
-//};
-
+//keep track of which time of item this is
 enum itemType { coffee, star, moneyBag };
 
 class Item {
 private:
+	//basic parameters for the item
 	vertex pos;
 	itemType thisItem;
 	bool collected;
@@ -40,17 +38,16 @@ public:
 	//class constructor
 	Item(Cell inputCell, itemType item, GLuint Id, Maze theMaze);
 
+	//get and sets for the item
 	void assignPointVal();
-
 	int getCell() { return cell; }
-	//int getXpos() { return pos.x; }
-	//int getYpos() { return pos.y; }
 	int getPointVal() { return pointVal; }
-
 	void setPos(int newX, int newY) { pos.x = newX, pos.y = newY; }
 
+	//draw the item in the game
 	void draw();
 
+	//get the item enum type
 	int getItemType() { return thisItem; }
 
 };
