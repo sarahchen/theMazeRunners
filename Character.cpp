@@ -27,23 +27,23 @@ Character object for game
 #include "Model.h"
 
 const double GRAVITY = 9.80665;
-const int STARTLIVES = 3;
+const int STARTLIVES = 1;	// possible future expansion
 const int FULLENERGY = 100;
 
 Character::Character()
 {
+	//game intializations
 	gameOver = false;
 	livesRemaining = STARTLIVES;
 	health = 100;
 	score = 100;
 
+	//game dynamics
 	Force = 0;
 	accel = 0;
 	mu = 0.85;
 
-
 	headingAngle = M_PI_2;
-
 	FsGetWindowSize(width, height);
 }
 
@@ -83,6 +83,7 @@ void Character::vehicleParams()
 {
 	double scaleWid, scaleHei;
 
+	//switch case to determine which car properties to assign to this character
 	switch (thisCar) {
 	
 	case lambo:
@@ -111,12 +112,11 @@ void Character::vehicleParams()
 		break;
 	}
 
+	//set car size based on type of car
 	thisCharacter.hei = 60 * scaleHei;
 	thisCharacter.wid = 30 * scaleWid;
 	thisCharacter.dep = 0;
-	
-	//if (thisCar == regCar) { thisCharacter.wid += 14; } //tweak because that graphic is funky
-	
+		
 }
 
 void Character::assignId(carType car, GLuint Id)
@@ -148,20 +148,15 @@ void Character::reset()
 
 void Character::updateKinematics(double deltaT)
 {
-	 //cout << "Force: " << Force << "    Acceleration: " << accel << "    Velocity:  "  << velocity << endl;
-
+	//check if the move is actually valid
 	if (isValidMove()) {
+		//reset position
 		posCenter.x += velocity * cos(headingAngle) * deltaT;
 		posCenter.y -= velocity * sin(headingAngle) * deltaT;
+		//reset velocity
 		velocity = std::max(-double(maxVel * maxVelMult), std::min(velocity + accel * deltaT, double(maxVel * maxVelMult)));
-		//if (velocity > 10) {
-		//	velocity = 10;
-		//	Force = 0;
-		//}
-		//if (velocity < -10) {
-		//	velocity = -10;
-		//	Force = 0;
-		//}
+		
+		//reset acceleration
 		if (velocity > .5) {
 			accel = -mu * GRAVITY + (Force / mass); 
 		}
@@ -171,10 +166,7 @@ void Character::updateKinematics(double deltaT)
 		else if (abs(velocity) <= 0.5) { 
 			accel = (Force / mass); 
 		}
-
-	//	if (abs(accel) < .01) { accel = 0; }
-	}
-
+	//if not a valid move (hitting obstacle)
 	else {
 		velocity = 0;
 		accel = 0;
@@ -190,20 +182,24 @@ void Character::adjustOrientation(double angleAdjust)
 
 void Character::goForward()
 {
+	//larger braking force than accelerating force
 	if (velocity > 0) { setForce(9000 * maxVelMult); }
 	else { setForce(16000); }
 }
 
 void Character::goBackward()
 {
+	//larger braking force than accelerating force
 	if (velocity < 0) { setForce(-9000 * maxVelMult); }
 	else { setForce(-16000); }
 }
 
 bool Character::isValidMove()
 {
+	//get the four corner locations
 	int myCornersX[] = { ax,dx, bx,cx };
 	int myCornersY[] = { ay,dy, by,cy };
+	
 	//first check limits of screen
 	if ((*std::min_element(myCornersX, myCornersX + 2) <= width/8 && velocity > 0) || (*std::min_element(myCornersX + 2, myCornersX + 4) <= width/8 && velocity < 0))
 	{
@@ -220,6 +216,7 @@ bool Character::isValidMove()
 		return false;
 	}
 
+	//check also to see if hit a wall
 	if (willHitObstacleFront && velocity > 0) { return false; }
 	if (willHitObstacleBack && velocity < 0) { return false; }
 
