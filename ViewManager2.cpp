@@ -124,8 +124,8 @@ void ViewManager::manage()
 
 				// TESTING
 				if (!background.isPlaying())
-					//background.setVolume(0.0);
-					//background.playOnce();
+
+					background.playOnce();
 
 				switch (theModel.getSoundTrig()) {
 				case 0:

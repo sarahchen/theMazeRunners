@@ -3,8 +3,6 @@
 #include <chrono>
 #include "Enemy.h"
 
-#define LINEAR_INDEX(X, Y, XSIZE, YSIZE) ((Y-1)*XSIZE + (X-1))
-
 using namespace std;
 
 void Enemy::spawn(Cell spawnCell, GLuint Id)

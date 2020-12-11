@@ -157,29 +157,31 @@ void Character::updateKinematics(double deltaT)
 		posCenter.y -= velocity * sin(headingAngle) * deltaT;
 		//reset velocity
 		velocity = std::max(-double(maxVel * maxVelMult), std::min(velocity + accel * deltaT, double(maxVel * maxVelMult)));
-		
+
 		//reset acceleration
 		if (velocity > .5) {
-			accel = -mu * GRAVITY + (Force / mass); 
+			accel = -mu * GRAVITY + (Force / mass);
 		}
-		else if (velocity < -0.5) { 
-			accel = mu * GRAVITY + (Force / mass); 
+		else if (velocity < -0.5) {
+			accel = mu * GRAVITY + (Force / mass);
 		}   //change direction of friction!!
-		else if (abs(velocity) <= 0.5) { 
-			accel = (Force / mass); 
+		else if (abs(velocity) <= 0.5) {
+			accel = (Force / mass);
 		}
-	//if not a valid move (hitting obstacle)
-	else {
-		velocity = 0;
-		accel = 0;
-		Force = 0;
 	}
+		//if not a valid move (hitting obstacle)
+		else {
+			velocity = 0;
+			accel = 0;
+			Force = 0;
+		}
+	
 }
 
 void Character::adjustOrientation(double angleAdjust)
 {
 	headingAngle += angleAdjust;
-	if (!(isValidOrientation())) { headingAngle -= angleAdjust; }
+	if (!isValidOrientation()) { headingAngle -= angleAdjust; }
 }
 
 void Character::goForward()
